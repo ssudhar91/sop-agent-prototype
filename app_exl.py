@@ -24,11 +24,12 @@ st.write(f"Using master Excel file: {excel_file_path}")
 # -------------------------------
 # Settings: header rows (0-indexed)
 # Based on your description:
-# - Group names are in Row 1 (index 0)
-# - Column headers (Business Unit, SOP Type, Number, Title, Roles...) are in Row 3 (index 2)
+# - Group names row is HEADER_GROUP_ROW
+# - Column headers (Business Unit, SOP Type, Number, Title, Roles...) are in HEADER_COLS_ROW
+# - Data starts at DATA_START_ROW
 HEADER_GROUP_ROW = 0
 HEADER_COLS_ROW = 2
-DATA_START_ROW = 3  # zero-indexed, i.e. Excel row 4
+DATA_START_ROW = 3  # zero-indexed (Excel row 4)
 
 category_map = {
     "Within 2 weeks": 1,    # All staff SOPs
@@ -37,8 +38,9 @@ category_map = {
 }
 
 # -------------------------------
-# Helper: robust column lookup (same as earlier)
+# Helper functions
 def pick_column(df, candidates):
+    """Return the first matching column name from candidates (case-insensitive)."""
     cols_lower = {c.lower(): c for c in df.columns}
     for cand in candidates:
         if cand is None:
@@ -76,33 +78,28 @@ if raw.shape[0] <= HEADER_COLS_ROW:
     st.stop()
 
 # Extract group row and header (roles) row
-group_row = raw.iloc[HEADER_GROUP_ROW].copy()
-# Forward-fill merged group cells (pandas reads merged cells as NaN after the first)
-group_row = group_row.fillna(method="ffill")
-
+group_row = raw.iloc[HEADER_GROUP_ROW].copy().fillna(method="ffill")
 header_row = raw.iloc[HEADER_COLS_ROW].astype(str).tolist()
 
 # Build data frame with header_row as columns and data starting from DATA_START_ROW
-data_df = raw.iloc[DATA_START_ROW:].copy()
+data_df = raw.iloc[DATA_START_ROW:].copy().reset_index(drop=True)
 data_df.columns = header_row
-data_df = data_df.reset_index(drop=True)
 
 # Roles are columns from index 4 (E) onward per your spec
 if len(header_row) <= 4:
     st.error("Unable to detect role columns: sheet doesn't have columns beyond column E.")
     st.stop()
 
-role_columns = header_row[4:]  # list of role header names as strings
-
-# Build group->roles mapping for this sheet (use positions to align with group_row)
+# Build group -> list of (col_idx, role_name) mapping using positions to avoid duplicate-label issues
 groups_map = {}
 for col_idx, col_name in enumerate(header_row):
     if col_idx < 4:
         continue
-    group_name = str(group_row.iloc[col_idx]).strip() if not pd.isna(group_row.iloc[col_idx]) else ""
+    raw_group_val = group_row.iloc[col_idx] if col_idx < len(group_row) else ""
+    group_name = str(raw_group_val).strip() if not pd.isna(raw_group_val) else ""
     if group_name == "" or group_name.lower() in ("nan", "none"):
         group_name = "Ungrouped"
-    groups_map.setdefault(group_name, []).append(col_name)
+    groups_map.setdefault(group_name, []).append((col_idx, col_name))
 
 # Sort groups for UI
 groups_sorted = sorted(groups_map.keys())
@@ -110,8 +107,20 @@ groups_sorted = sorted(groups_map.keys())
 # -------------------------------
 # UI: choose group then role
 selected_group = st.selectbox("Choose the Group:", groups_sorted)
-roles_in_group = groups_map.get(selected_group, [])
-selected_role = st.selectbox("Choose the Role (within selected group):", roles_in_group)
+
+# Build display options for roles within the selected group.
+# To avoid ambiguity we map display string -> column index.
+role_entries = groups_map.get(selected_group, [])
+display_to_colidx = {}
+display_options = []
+for i, (col_idx, role_name) in enumerate(role_entries):
+    # Make a readable label. Include column index to ensure uniqueness (in case role repeats within group).
+    display_label = f"{role_name}  (col {col_idx})"
+    display_options.append(display_label)
+    display_to_colidx[display_label] = col_idx
+
+selected_role_display = st.selectbox("Choose the Role (within selected group):", display_options)
+selected_col_idx = display_to_colidx[selected_role_display]
 
 # -------------------------------
 # Choose SOP Category
@@ -122,6 +131,7 @@ st.markdown("---")
 
 # -------------------------------
 # Normalize expected columns (Number, Title, Business Unit, SOP Type, Notes)
+# Use header names present in data_df (which are header_row entries)
 bu_col = pick_column(data_df, ["Business Unit", "BusinessUnit", "Business unit", "Business_unit"])
 sop_type_col = pick_column(data_df, ["SOP Type", "SOPType", "SOP type"])
 number_col = pick_column(data_df, ["Number", "No", "ID", "SOP Number", "SOP No", "Number "])
@@ -132,21 +142,17 @@ notes_col = pick_column(data_df, ["Notes", "Note", "Remarks", "Region Notes", "C
 if title_col is None and len(data_df.columns) >= 4:
     title_col = data_df.columns[3]
 
-# Ensure role column exists in data_df
-if selected_role not in data_df.columns:
-    st.error(f"Selected role column '{selected_role}' not found in sheet.")
-    st.stop()
+# -------------------------------
+# Use iloc with selected_col_idx to get the exact role column (avoids duplicate label problem)
+role_series = data_df.iloc[:, selected_col_idx].apply(to_int_safe)
 
-# Convert role column to numeric safe ints
-data_df[selected_role] = data_df[selected_role].apply(to_int_safe)
-
-# Filter rows where role==category_value
-filtered = data_df[data_df[selected_role] == category_value].copy()
+# Filter rows where role == category_value
+filtered = data_df[role_series == category_value].copy()
 
 # -------------------------------
 # Prepare table to display with Number & Title first
 if filtered.empty:
-    st.info(f"No SOPs found for role **{selected_role}** in category **{sop_category}** (sheet: {sheet_choice}).")
+    st.info(f"No SOPs found for role **{selected_role_display}** in category **{sop_category}** (sheet: {sheet_choice}).")
 else:
     # Build display dataframe
     display_cols = []
@@ -186,7 +192,9 @@ else:
             cols_order.append(c)
     table_df = table_df[cols_order]
 
-    st.subheader(f"SOPs — Sheet: **{sheet_choice}** | Group: **{selected_group}** | Role: **{selected_role}** | Category: **{sop_category}**")
+    st.subheader(
+        f"SOPs — Sheet: **{sheet_choice}** | Group: **{selected_group}** | Role: **{selected_role_display}** | Category: **{sop_category}**"
+    )
     st.dataframe(table_df.reset_index(drop=True), use_container_width=True)
 
     # CSV download
@@ -196,7 +204,7 @@ else:
     st.download_button(
         label="Download filtered SOPs as CSV",
         data=csv_bytes,
-        file_name=f"sops_{sheet_choice}_{selected_group}_{selected_role}_{sop_category.replace(' ','_')}.csv",
+        file_name=f"sops_{sheet_choice}_{selected_group}_{selected_role_display}_{sop_category.replace(' ','_')}.csv",
         mime="text/csv",
     )
 
@@ -215,8 +223,8 @@ if notes_col and notes_col in data_df.columns:
     data_df["RegionsDetected"] = data_df[notes_col].apply(detect_regions)
     region_hits = data_df[data_df["RegionsDetected"] != ""]
     if not region_hits.empty:
+        # prepare display
         display = region_hits[[c for c in [number_col, title_col, "RegionsDetected"] if c in region_hits.columns]].fillna("")
-        # Rename columns for display clarity
         rename_map2 = {}
         if number_col and number_col in display.columns:
             rename_map2[number_col] = "Number"
