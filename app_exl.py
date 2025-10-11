@@ -19,7 +19,7 @@ st.title("Agentic AI – Excel SOP Query Interface")
 # Paths
 # -------------------------------
 base_dir = os.path.dirname(__file__)
-output_dir = os.path.join(base_dir, "output")
+output_dir = os.path.join(base_dir, "data")
 st.write("Using Excel folder:", output_dir)
 
 # -------------------------------
