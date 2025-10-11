@@ -1,96 +1,60 @@
 # app.py
 import streamlit as st
-import pandas as pd
 import os
 import openai
 
 # -------------------------
 # Config
 # -------------------------
-DATA_PATH = "data/Novotech_SOP_Matrix.xlsx"  # fallback Excel
 OUTPUT_DIR = "output"
 
-# -------------------------
-# Streamlit UI
-# -------------------------
-st.set_page_config(page_title="Novotech SOP Finder", layout="wide")
-st.title("Novotech SOP Finder with GPT-5")
-
-uploaded = st.file_uploader("Upload SOP Excel (optional, else repo file used)", type=["xlsx"])
-if uploaded is not None:
-    df = pd.read_excel(uploaded, sheet_name=0, header=None)
-else:
-    try:
-        df = pd.read_excel(DATA_PATH, sheet_name=0, header=None)
-    except Exception as e:
-        st.error("No Excel file found. Upload or place Novotech_SOP_Matrix.xlsx in data/ folder.")
-        st.stop()
+st.set_page_config(page_title="Novotech SOP Finder - Agentic AI", layout="wide")
+st.title("Novotech SOP Finder — Agentic AI with GPT-5")
 
 # -------------------------
-# Parse Excel according to your structure
+# Load preprocessed SOP files
 # -------------------------
-# Role names (row 3, col E onwards)
-roles = df.iloc[2, 4:].tolist()
+all_files = [f for f in os.listdir(OUTPUT_DIR) if f.endswith(".txt")]
+if not all_files:
+    st.error("No preprocessed SOP files found in 'output/' folder. Upload them first.")
+    st.stop()
 
-# Group names (row 1, col E onwards)
-groups = df.iloc[0, 4:].tolist()
+# Sidebar: select roles
+st.sidebar.header("Select Roles")
+selected_roles = st.sidebar.multiselect("Choose roles to include", options=all_files, default=all_files[:5])
 
-# SOP rows start from row 4
-sop_rows = df.iloc[3:, :]
+# Read selected SOP files
+sop_context = []
+for role_file in selected_roles:
+    file_path = os.path.join(OUTPUT_DIR, role_file)
+    with open(file_path, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+        # skip empty lines
+        lines = [l.strip() for l in lines if l.strip()]
+        sop_context.extend(lines)
 
-# Build a long-format DataFrame: one row per SOP per role if apply_flag in 1/2/3
-records = []
-for col_idx, role in enumerate(roles, start=4):
-    group_name = groups[col_idx - 4]
-    for row_idx, row in sop_rows.iterrows():
-        apply_flag = row[col_idx]
-        if apply_flag in [1, 2, 3]:
-            records.append({
-                "Role": role,
-                "Group": group_name,
-                "Business Unit": row[0],
-                "SOP Type": row[1],
-                "SOP Code": row[2],
-                "Title": row[3],
-                "Apply Level": apply_flag
-            })
+if not sop_context:
+    st.warning("No SOP lines found for selected roles.")
+    st.stop()
 
-long_df = pd.DataFrame(records)
-
-# -------------------------
-# Sidebar Filters
-# -------------------------
-st.sidebar.header("Filters")
-all_roles = sorted(long_df["Role"].unique())
-selected_roles = st.sidebar.multiselect("Select roles", all_roles, default=all_roles[:5])
-selected_marks = st.sidebar.multiselect("Apply Level (1,2,3)", options=[1,2,3], default=[1,2,3])
-selected_groups = st.sidebar.multiselect("Select groups", long_df["Group"].unique(), default=long_df["Group"].unique())
-
-filtered_df = long_df[
-    (long_df["Role"].isin(selected_roles)) &
-    (long_df["Apply Level"].isin(selected_marks)) &
-    (long_df["Group"].isin(selected_groups))
-]
-
-st.subheader("Filtered SOPs")
-st.write(f"Total rows: {len(filtered_df)}")
-st.dataframe(filtered_df.reset_index(drop=True))
+# Display SOP lines (first 100)
+st.subheader("SOP Lines for Selected Roles")
+st.text("\n".join(sop_context[:100]))
 
 # -------------------------
-# LLM Question Answering
+# GPT-5 Question Answering
 # -------------------------
-st.subheader("Ask a question about the filtered SOPs")
-
+st.subheader("Ask a question about the SOPs")
 user_question = st.text_input("Type your question here:")
 
 if user_question:
     if "OPENAI_API_KEY" not in st.secrets:
-        st.error("Add your OPENAI_API_KEY in Streamlit Secrets to enable GPT-5.")
+        st.error("Please add your OPENAI_API_KEY in Streamlit secrets to enable GPT-5.")
     else:
         openai.api_key = st.secrets["OPENAI_API_KEY"]
-        # Prepare context: first 50 rows
-        context = filtered_df.head(50).to_dict(orient="records")
-        prompt = f"Answer the question based on the SOP context below:\n\nContext:\n{context}\n\nQuestion: {user_question}\nAnswer clearly."
+        # Prepare prompt
+        prompt = f"Answer the question based on the SOP context below:\n\nContext:\n" \
+                 f"{sop_context[:200]}\n\nQuestion: {user_question}\nAnswer clearly."
         try:
             response = openai.ChatCompletion.create(
                 model="gpt-5-mini",
