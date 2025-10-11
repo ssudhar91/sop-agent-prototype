@@ -3,33 +3,31 @@ import pickle
 import streamlit as st
 import pandas as pd
 
-# LangChain & OpenAI imports
+# LangChain & OpenAI
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatOpenAI
 
-base_dir = os.path.dirname(__file__)          # folder where app.py is located
-output_dir = os.path.join(base_dir, "output") # folder containing TXT/Excel files
-
-st.write("Output folder being used:", output_dir)
-
-# Now you can use `output_dir` to load files
-files = os.listdir(output_dir)
-st.write("SOP files found:", files)
+# -------------------------------
+# 1️⃣ Streamlit Page Setup
+# -------------------------------
 st.set_page_config(page_title="Agentic AI – SOP Query", layout="wide")
 st.title("Agentic AI – SOP Query Interface")
 
 # -------------------------------
-# 1️⃣ Set up KB paths
+# 2️⃣ Setup file paths (Codespace-safe)
 # -------------------------------
 base_dir = os.path.dirname(__file__)
 output_dir = os.path.join(base_dir, "output")
 kb_pickle = os.path.join(base_dir, "preprocessed_kb.pkl")
+embeddings_pickle = os.path.join(base_dir, "vectorstores.pkl")
+
+st.write("Output folder being used:", output_dir)
 
 # -------------------------------
-# 2️⃣ Load or preprocess KB
+# 3️⃣ Load or preprocess KB
 # -------------------------------
 if os.path.exists(kb_pickle):
     with open(kb_pickle, "rb") as f:
@@ -40,13 +38,14 @@ else:
     kb_data = {}
     
     for file in os.listdir(output_dir):
+        file_path = os.path.join(output_dir, file)
         if file.endswith(".txt"):
-            with open(os.path.join(output_dir, file), "r") as f:
+            with open(file_path, "r") as f:
                 text = f.read()
             splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
             kb_data[file] = splitter.split_text(text)
         elif file.endswith(".xlsx"):
-            xls = pd.ExcelFile(os.path.join(output_dir, file))
+            xls = pd.ExcelFile(file_path)
             for sheet in xls.sheet_names:
                 df = xls.parse(sheet)
                 text = "\n".join(df.astype(str).values.flatten())
@@ -58,17 +57,15 @@ else:
     st.success("KB preprocessing completed and saved.")
 
 # -------------------------------
-# 3️⃣ Create or load embeddings
+# 4️⃣ Create or load embeddings
 # -------------------------------
-embeddings_pickle = os.path.join(base_dir, "vectorstores.pkl")
-
 if os.path.exists(embeddings_pickle):
     with open(embeddings_pickle, "rb") as f:
         vectorstores = pickle.load(f)
     st.info("Loaded vectorstore embeddings successfully.")
 else:
     st.info("Creating embeddings for KB...")
-    embeddings = OpenAIEmbeddings()  # Ensure your API key is set in env
+    embeddings = OpenAIEmbeddings()  # requires OPENAI_API_KEY in environment
     vectorstores = {}
     for key, chunks in kb_data.items():
         vectorstores[key] = FAISS.from_texts(chunks, embeddings)
@@ -77,24 +74,26 @@ else:
     st.success("Embeddings created and saved.")
 
 # -------------------------------
-# 4️⃣ User query interface
+# 5️⃣ User selects a role (optional) or queries all
 # -------------------------------
-query = st.text_input("Ask something about any role or SOP:")
+roles = list(vectorstores.keys())
+selected_role = st.selectbox("Select a role (optional, 'All' searches all SOPs):", ["All"] + roles)
+query = st.text_input("Ask a question about SOPs:")
 
 if query:
-    # Merge all vectorstores for search (or select specific role)
-    all_indices = list(vectorstores.values())
+    if selected_role == "All":
+        all_indices = list(vectorstores.values())
+        combined = FAISS.merge_from(all_indices)
+        retriever = combined.as_retriever()
+    else:
+        retriever = vectorstores[selected_role].as_retriever()
     
-    # For demo, combine all indices into one retriever
-    combined_docs = FAISS.merge_from([v for v in all_indices])
-    retriever = combined_docs.as_retriever()
-
     qa = RetrievalQA.from_chain_type(
         llm=ChatOpenAI(temperature=0),
         chain_type="stuff",
         retriever=retriever
     )
-
+    
     response = qa.run(query)
     st.markdown("**Agentic AI says:**")
     st.write(response)
