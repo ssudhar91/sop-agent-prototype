@@ -16,37 +16,29 @@ st.set_page_config(page_title="Agentic AI – Excel SOP Query", layout="wide")
 st.title("Agentic AI – Excel SOP Query Interface")
 
 # -------------------------------
-# Paths
+# Path to master Excel file
 # -------------------------------
 base_dir = os.path.dirname(__file__)
-output_dir = os.path.join(base_dir, "data")
-st.write("Using Excel folder:", output_dir)
+excel_file_path = os.path.join(base_dir, "data", "Novotech_SOP_Matrix.xlsx")
 
-# -------------------------------
-# Load Excel files
-# -------------------------------
-excel_files = [f for f in os.listdir(output_dir) if f.endswith(".xlsx")]
-if not excel_files:
-    st.warning("No Excel files found in the 'output/' folder.")
+if not os.path.exists(excel_file_path):
+    st.error(f"Master Excel file not found at {excel_file_path}")
 else:
-    st.write("Excel files found:", excel_files)
+    st.write(f"Using master Excel file: {excel_file_path}")
 
-# -------------------------------
-# Flatten Excel sheets into text per role
-# -------------------------------
-role_texts = {}
-for file in excel_files:
-    xls = pd.ExcelFile(os.path.join(output_dir, file))
+    # -------------------------------
+    # Load Excel file and flatten sheets into text per role
+    # -------------------------------
+    xls = pd.ExcelFile(excel_file_path)
+    role_texts = {}
     for sheet in xls.sheet_names:
         df = xls.parse(sheet)
-        # Flatten sheet into a single string
-        role_texts[f"{file} - {sheet}"] = "\n".join(df.astype(str).values.flatten())
+        role_texts[sheet] = "\n".join(df.astype(str).values.flatten())
 
-# -------------------------------
-# User selects role
-# -------------------------------
-roles = list(role_texts.keys())
-if roles:
+    # -------------------------------
+    # User selects role
+    # -------------------------------
+    roles = list(role_texts.keys())
     selected_role = st.selectbox("Select a role to query:", roles)
 
     query = st.text_input("Ask a question about SOP:")
