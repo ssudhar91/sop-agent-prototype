@@ -22,10 +22,13 @@ if not os.path.exists(excel_file_path):
 st.write(f"Using master Excel file: {excel_file_path}")
 
 # -------------------------------
-# Settings
-# -------------------------------
-# The user said Row 3 contains headers ("Business Unit","SOP Type","Number","Title" and roles from E3 onwards).
-HEADER_ROW = 2  # zero-indexed: row 3 in Excel
+# Settings: header rows (0-indexed)
+# Based on your description:
+# - Group names are in Row 1 (index 0)
+# - Column headers (Business Unit, SOP Type, Number, Title, Roles...) are in Row 3 (index 2)
+HEADER_GROUP_ROW = 0
+HEADER_COLS_ROW = 2
+DATA_START_ROW = 3  # zero-indexed, i.e. Excel row 4
 
 category_map = {
     "Within 2 weeks": 1,    # All staff SOPs
@@ -34,10 +37,8 @@ category_map = {
 }
 
 # -------------------------------
-# Utility: robust column lookup
-# -------------------------------
+# Helper: robust column lookup (same as earlier)
 def pick_column(df, candidates):
-    """Return the first matching column name from candidates (case-insensitive)."""
     cols_lower = {c.lower(): c for c in df.columns}
     for cand in candidates:
         if cand is None:
@@ -47,89 +48,6 @@ def pick_column(df, candidates):
             return cols_lower[key]
     return None
 
-# -------------------------------
-# Read sheets and extract roles
-# -------------------------------
-xls = pd.ExcelFile(excel_file_path)
-# Read the first sheet header to get role column names (we assume same structure across sheets)
-first_sheet = xls.sheet_names[0]
-df_head = pd.read_excel(excel_file_path, sheet_name=first_sheet, header=HEADER_ROW)
-
-# Roles start from column E (index 4)
-if len(df_head.columns) <= 4:
-    st.error("Unable to detect role columns: sheet doesn't have columns beyond E.")
-    st.stop()
-
-role_columns = list(df_head.columns[4:])
-roles = role_columns.copy()  # Use actual header names as role labels for dropdown
-
-# -------------------------------
-# User selections
-# -------------------------------
-sop_category = st.selectbox("Choose the SOP category:", list(category_map.keys()))
-selected_role = st.selectbox("Choose your role:", roles)
-
-st.markdown("---")
-
-# -------------------------------
-# Function to process a sheet into a normalized dataframe
-# -------------------------------
-def process_sheet(sheet_name):
-    df = pd.read_excel(excel_file_path, sheet_name=sheet_name, header=HEADER_ROW, dtype=object)
-    # Ensure role columns exist; if not, skip
-    if len(df.columns) <= 4:
-        return pd.DataFrame()  # empty
-
-    # Normalize column names we expect
-    bu_col = pick_column(df, ["Business Unit", "BusinessUnit", "Business unit", "Business_unit"])
-    sop_type_col = pick_column(df, ["SOP Type", "SOPType", "SOP type"])
-    number_col = pick_column(df, ["Number", "No", "ID", "SOP Number", "Number "])
-    title_col = pick_column(df, ["Title", "SOP Title", "Name", "Title "])
-    notes_col = pick_column(df, ["Notes", "Note", "Remarks", "Region Notes", "Comments"])
-
-    # If title or number missing try to find likely alternate names
-    if title_col is None:
-        # take the first unused non-role column after D
-        for c in df.columns[:4]:
-            # ignore the first 4 header columns if they look like the standard ones
-            pass
-        # fallback to column D if exists
-        if len(df.columns) >= 4:
-            title_col = df.columns[3]
-
-    # Prepare a consistent dataframe
-    # Keep original role columns (E onwards) as-is
-    role_cols = list(df.columns[4:])
-    normalized = pd.DataFrame()
-    normalized["__sheet__"] = sheet_name
-    normalized["Business Unit"] = df[bu_col] if bu_col in df.columns else ""
-    normalized["SOP Type"] = df[sop_type_col] if sop_type_col in df.columns else ""
-    normalized["Number"] = df[number_col] if number_col in df.columns else ""
-    normalized["Title"] = df[title_col] if title_col in df.columns else ""
-    normalized["Notes"] = df[notes_col] if (notes_col and notes_col in df.columns) else ""
-
-    # attach role columns as they are (keep original values)
-    for rc in role_cols:
-        normalized[rc] = df[rc]
-
-    return normalized
-
-# -------------------------------
-# Aggregate all sheets
-# -------------------------------
-all_sops = []
-for sheet_name in xls.sheet_names:
-    proc = process_sheet(sheet_name)
-    if not proc.empty:
-        all_sops.append(proc)
-
-if not all_sops:
-    st.warning("No structured SOP rows found across sheets.")
-    st.stop()
-
-master_df = pd.concat(all_sops, ignore_index=True)
-
-# Convert role columns values to numeric when possible (strip spaces)
 def to_int_safe(v):
     try:
         if pd.isna(v):
@@ -143,76 +61,170 @@ def to_int_safe(v):
     except Exception:
         return None
 
-# Apply conversion for role columns
-for rc in roles:
-    master_df[rc] = master_df[rc].apply(to_int_safe)
+# -------------------------------
+# Load workbook and list sheets
+xls = pd.ExcelFile(excel_file_path)
+sheets = xls.sheet_names
+sheet_choice = st.selectbox("Choose sheet:", sheets)
+
+# Load the selected sheet with no header to access the group row and header row
+raw = pd.read_excel(excel_file_path, sheet_name=sheet_choice, header=None, dtype=object)
+
+# Basic sanity checks
+if raw.shape[0] <= HEADER_COLS_ROW:
+    st.error("The selected sheet doesn't have the expected header rows. Check the sheet layout.")
+    st.stop()
+
+# Extract group row and header (roles) row
+group_row = raw.iloc[HEADER_GROUP_ROW].copy()
+# Forward-fill merged group cells (pandas reads merged cells as NaN after the first)
+group_row = group_row.fillna(method="ffill")
+
+header_row = raw.iloc[HEADER_COLS_ROW].astype(str).tolist()
+
+# Build data frame with header_row as columns and data starting from DATA_START_ROW
+data_df = raw.iloc[DATA_START_ROW:].copy()
+data_df.columns = header_row
+data_df = data_df.reset_index(drop=True)
+
+# Roles are columns from index 4 (E) onward per your spec
+if len(header_row) <= 4:
+    st.error("Unable to detect role columns: sheet doesn't have columns beyond column E.")
+    st.stop()
+
+role_columns = header_row[4:]  # list of role header names as strings
+
+# Build group->roles mapping for this sheet (use positions to align with group_row)
+groups_map = {}
+for col_idx, col_name in enumerate(header_row):
+    if col_idx < 4:
+        continue
+    group_name = str(group_row.iloc[col_idx]).strip() if not pd.isna(group_row.iloc[col_idx]) else ""
+    if group_name == "" or group_name.lower() in ("nan", "none"):
+        group_name = "Ungrouped"
+    groups_map.setdefault(group_name, []).append(col_name)
+
+# Sort groups for UI
+groups_sorted = sorted(groups_map.keys())
 
 # -------------------------------
-# Filter SOPs by selected role + category
+# UI: choose group then role
+selected_group = st.selectbox("Choose the Group:", groups_sorted)
+roles_in_group = groups_map.get(selected_group, [])
+selected_role = st.selectbox("Choose the Role (within selected group):", roles_in_group)
+
 # -------------------------------
+# Choose SOP Category
+sop_category = st.selectbox("Choose the SOP category:", list(category_map.keys()))
 category_value = category_map[sop_category]
 
-filtered = master_df[master_df[selected_role] == category_value].copy()
+st.markdown("---")
 
 # -------------------------------
-# Prepare display table
+# Normalize expected columns (Number, Title, Business Unit, SOP Type, Notes)
+bu_col = pick_column(data_df, ["Business Unit", "BusinessUnit", "Business unit", "Business_unit"])
+sop_type_col = pick_column(data_df, ["SOP Type", "SOPType", "SOP type"])
+number_col = pick_column(data_df, ["Number", "No", "ID", "SOP Number", "SOP No", "Number "])
+title_col = pick_column(data_df, ["Title", "SOP Title", "Name", "Title "])
+notes_col = pick_column(data_df, ["Notes", "Note", "Remarks", "Region Notes", "Comments"])
+
+# Fallback: if title_col missing, try column D (4th column name)
+if title_col is None and len(data_df.columns) >= 4:
+    title_col = data_df.columns[3]
+
+# Ensure role column exists in data_df
+if selected_role not in data_df.columns:
+    st.error(f"Selected role column '{selected_role}' not found in sheet.")
+    st.stop()
+
+# Convert role column to numeric safe ints
+data_df[selected_role] = data_df[selected_role].apply(to_int_safe)
+
+# Filter rows where role==category_value
+filtered = data_df[data_df[selected_role] == category_value].copy()
+
 # -------------------------------
+# Prepare table to display with Number & Title first
 if filtered.empty:
-    st.info(f"No SOPs found for role **{selected_role}** in category **{sop_category}**.")
+    st.info(f"No SOPs found for role **{selected_role}** in category **{sop_category}** (sheet: {sheet_choice}).")
 else:
-    # Build a neat table with required columns: Number, Title, Business Unit, SOP Type, Notes, Sheet
-    display_cols = ["Number", "Title", "Business Unit", "SOP Type", "Notes", "__sheet__"]
-    # If any of these columns are missing in the DF, only keep ones that exist
-    display_cols = [c for c in display_cols if c in filtered.columns]
+    # Build display dataframe
+    display_cols = []
+    if number_col and number_col in filtered.columns:
+        display_cols.append(number_col)
+    if title_col and title_col in filtered.columns:
+        display_cols.append(title_col)
+
+    # Add additional useful columns
+    for c in ["Business Unit", "SOP Type", "Notes"]:
+        if c in filtered.columns:
+            display_cols.append(c)
+
+    # If none of number/title detected, fall back to first 4 columns
+    if not display_cols:
+        display_cols = list(filtered.columns[:4])
 
     table_df = filtered[display_cols].copy()
-    # Clean up NaNs
+    # Clean NaNs
     table_df = table_df.fillna("")
+    # Standardize column names for display: prefer "Number" and "Title"
+    rename_map = {}
+    if number_col and number_col in table_df.columns:
+        rename_map[number_col] = "Number"
+    if title_col and title_col in table_df.columns:
+        rename_map[title_col] = "Title"
+    table_df = table_df.rename(columns=rename_map)
 
-    # Rename __sheet__ to Sheet for display
-    if "__sheet__" in table_df.columns:
-        table_df = table_df.rename(columns={"__sheet__": "Sheet"})
-
-    # Ensure Number and Title are first columns (Number then Title)
+    # Reorder to ensure Number then Title
     cols_order = []
     if "Number" in table_df.columns:
         cols_order.append("Number")
     if "Title" in table_df.columns:
         cols_order.append("Title")
-    # then others
     for c in table_df.columns:
         if c not in cols_order:
             cols_order.append(c)
     table_df = table_df[cols_order]
 
-    st.subheader(f"SOPs for role **{selected_role}** — Category: **{sop_category}**")
-    st.dataframe(table_df, use_container_width=True)
+    st.subheader(f"SOPs — Sheet: **{sheet_choice}** | Group: **{selected_group}** | Role: **{selected_role}** | Category: **{sop_category}**")
+    st.dataframe(table_df.reset_index(drop=True), use_container_width=True)
 
-    # Provide CSV download
+    # CSV download
     csv_buffer = io.StringIO()
     table_df.to_csv(csv_buffer, index=False)
     csv_bytes = csv_buffer.getvalue().encode()
     st.download_button(
         label="Download filtered SOPs as CSV",
         data=csv_bytes,
-        file_name=f"sops_{selected_role}_{sop_category.replace(' ', '_')}.csv",
+        file_name=f"sops_{sheet_choice}_{selected_group}_{selected_role}_{sop_category.replace(' ','_')}.csv",
         mime="text/csv",
     )
 
 # -------------------------------
-# Extra: show region-specific SOPs if present in Notes
-# -------------------------------
+# Region detection (from Notes) — optional
 st.markdown("---")
-st.write("Region-specific SOPs (detected in Notes):")
-regions = ["china", "korea", "taiwan", "hong kong", "india", "us", "uk"]  # add more as desired
-def detect_regions(text):
-    text = str(text).lower()
-    found = [r for r in regions if r in text]
-    return ", ".join(found) if found else ""
+st.write("Region-specific SOPs detected in Notes (simple keyword scan):")
+regions = ["china", "korea", "taiwan", "hong kong", "india", "us", "uk"]  # extend as needed
 
-master_df["RegionsDetected"] = master_df["Notes"].apply(detect_regions) if "Notes" in master_df.columns else ""
-region_hits = master_df[master_df["RegionsDetected"] != ""]
-if not region_hits.empty:
-    st.dataframe(region_hits[["Number", "Title", "Business Unit", "RegionsDetected"]].fillna(""), use_container_width=True)
+if notes_col and notes_col in data_df.columns:
+    def detect_regions(text):
+        text = str(text).lower()
+        found = [r for r in regions if r in text]
+        return ", ".join(found) if found else ""
+
+    data_df["RegionsDetected"] = data_df[notes_col].apply(detect_regions)
+    region_hits = data_df[data_df["RegionsDetected"] != ""]
+    if not region_hits.empty:
+        display = region_hits[[c for c in [number_col, title_col, "RegionsDetected"] if c in region_hits.columns]].fillna("")
+        # Rename columns for display clarity
+        rename_map2 = {}
+        if number_col and number_col in display.columns:
+            rename_map2[number_col] = "Number"
+        if title_col and title_col in display.columns:
+            rename_map2[title_col] = "Title"
+        display = display.rename(columns=rename_map2)
+        st.dataframe(display.reset_index(drop=True), use_container_width=True)
+    else:
+        st.write("No region-specific indicators found.")
 else:
-    st.write("No region-specific information detected (based on common region keywords).")
+    st.write("No Notes column to detect region-specific SOPs.")
