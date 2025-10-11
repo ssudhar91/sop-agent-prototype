@@ -12,6 +12,12 @@ from langchain.chat_models import ChatOpenAI
 
 base_dir = os.path.dirname(__file__)          # folder where app.py is located
 output_dir = os.path.join(base_dir, "output") # folder containing TXT/Excel files
+
+st.write("Output folder being used:", output_dir)
+
+# Now you can use `output_dir` to load files
+files = os.listdir(output_dir)
+st.write("SOP files found:", files)
 st.set_page_config(page_title="Agentic AI – SOP Query", layout="wide")
 st.title("Agentic AI – SOP Query Interface")
 
