@@ -1,0 +1,48 @@
+SOPs for Project Support:
+
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-001 | Title: Business Continuity | Group: nan
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-002 | Title: Confidentiality and Privacy Policy | Group: nan
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-003 | Title: Whistleblower Policy | Group: nan
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-004 | Title: Code of Conduct | Group: nan
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-005 | Title: Anti-Bribery and Anti-Corruption | Group: nan
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITC-001 | Title: IT Acceptable Use | Group: nan
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITC-002 | Title: Data Classification and Handling | Group: nan
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITC-003 | Title: AI Acceptable Use Policy | Group: nan
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITO-002 | Title: IT Security | Group: nan
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITO-004 | Title: Information Security | Group: nan
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITC-003 | Title: GxP Computer System Validation | Group: nan
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITO-001 | Title: Implementation of Information Systems | Group: nan
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITO-002 | Title: GxP Computer System Validation | Group: nan
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITO-009 | Title: Data Access and Transfer | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 09-0114 | Title: Management of Master Schedule for Bioanalytical Laboratory | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 09-0115 | Title: Management of Precursor Chemicals | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 10-0102 | Title: Use of Balance | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: IX-022 | Title: Management of Master Schedule for Bioanalytical Laboratory, 藥動分析實驗室主進度表管理 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: IX-113 | Title: Project Through Test in Central Laboratory, 核心實驗室專案之案件流程測試 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-A01 | Title: Control of Handwritten Signatures | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-A02 | Title: Protocol and Method Deviation | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-A03 | Title: Laboratory Change Management | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-C01 | Title: Training & Competency Assessment of Laboratory Personnel | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-E01 | Title: Monitoring and Control of Temperature and Humidity in Laboratory | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-V01 | Title: Archive Room Management | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-V02 | Title: Management of Exl Spreadsheet for Data Processing | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-063 | Title: Clinical Blind Project Management | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLB-A03 | Title: Project Personnel Assignment for Analytical Laboratory | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLC-V01 | Title: Document Control for CAP Laboratories | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLO-K01 | Title: Project Supplement Management of Novotech Laboratory Service | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLO-Z01 | Title: Laboratory Project Management | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: V-017 | Title: The Establishment of Trial Master File for Project in Central Laboratory, 核心實驗室專案總檔案資料夾建立程序 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: VII-007 | Title: Specimen Management in Central Lab, 核心實驗室檢體管理 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: VII-011 | Title: Management of Specimen Shipping-out in Central Laboratory, 核心實驗室檢體送出管理 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: VII-012 | Title: The Procedure of Specimen Pick-up Management, 收檢管理程序 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: XI-024 | Title: LIMS Test Item And Project Setup, LIMS 檢驗項目及案件設定 | Group: nan
+- Business Unit: Learning and Development | SOP Type: SOP | Number: SOP-LND-001 | Title: Training Management | Group: nan
+- Business Unit: Legal | SOP Type: Policy | Number: POL-LGL-001 | Title: Electronic Signatures | Group: nan
+- Business Unit: Quality Assurance | SOP Type: Policy | Number: POL-QAD-001 | Title: Good Documentation Practices | Group: nan
+- Business Unit: Quality Assurance | SOP Type: Policy | Number: POL-QAD-002 | Title: Quality Management | Group: nan
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-001 | Title: Development and Control of Quality Documents | Group: nan
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-003 | Title: Non-compliance and Quality Issue Management | Group: nan
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-004 | Title: Managing Client Audits and Qualifications | Group: nan
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-005 | Title: Regulatory Authority Inspections | Group: nan
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-007 | Title: Scientific Fraud and/or Serious Misconduct | Group: nan
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-008 | Title: Client Feedback | Group: nan

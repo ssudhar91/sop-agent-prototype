@@ -1,0 +1,11 @@
+SOPs for MM (EXT):
+
+- Business Unit: Medical Monitoring | SOP Type: SOP | Number: SOP-MDM-001 | Title: Medical Monitoring | Group: nan
+- Business Unit: Medical Monitoring | SOP Type: SOP | Number: SOP-MDM-002 | Title: Management of a Data Safety Monitoring Board or Safety Review Committee | Group: nan
+- Business Unit: Pharmacovigilance | SOP Type: SOP | Number: SOP-PHV-003 | Title: Safety Reporting - Regulatory Authority, Investigators and Ethics Committee | Group: nan
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-004 | Title: Clinical Trial Document Filing and Management | Group: nan
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-006 | Title: Protocol Deviation and Serious Breaches Management | Group: nan
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-008 | Title: Project Team Training and Transition | Group: nan
+- Business Unit: Quality Assurance | SOP Type: Policy | Number: POL-QAD-001 | Title: Good Documentation Practices | Group: nan
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-003 | Title: Non-compliance and Quality Issue Management | Group: nan
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-007 | Title: Scientific Fraud and/or Serious Misconduct | Group: nan

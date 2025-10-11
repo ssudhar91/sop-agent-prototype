@@ -1,0 +1,168 @@
+SOPs for Laboratory Quality Assurance:
+
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-001 | Title: Business Continuity | Group: nan
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-002 | Title: Confidentiality and Privacy Policy | Group: nan
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-003 | Title: Whistleblower Policy | Group: nan
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-004 | Title: Code of Conduct | Group: nan
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-005 | Title: Anti-Bribery and Anti-Corruption | Group: nan
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITC-001 | Title: IT Acceptable Use | Group: nan
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITC-002 | Title: Data Classification and Handling | Group: nan
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITC-003 | Title: AI Acceptable Use Policy | Group: nan
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITO-002 | Title: IT Security | Group: nan
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITO-004 | Title: Information Security | Group: nan
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITC-003 | Title: GxP Computer System Validation | Group: nan
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITO-001 | Title: Implementation of Information Systems | Group: nan
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITO-002 | Title: GxP Computer System Validation | Group: nan
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITO-009 | Title: Data Access and Transfer | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 04-0102 | Title: Preparation of Validation and Bioanalytical Protocol for Bioanalytical Lab | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 04-0103 | Title: Record Checking and Report Preparation for Biosample Analysis | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 09-0105 | Title: Procedure for Bioanalytical Method Validation and Quantification Using Chromatographic Methods | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 09-0110 | Title: Cleaning of Lab Glassware, Containers, and Apparatuses | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 09-0114 | Title: Management of Master Schedule for Bioanalytical Laboratory | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 09-0115 | Title: Management of Precursor Chemicals | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 10-0102 | Title: Use of Balance | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 10-0105 | Title: Use of Vortex | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 10-0108 | Title: Use of Ultra-Sonicator | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 10-0110 | Title: Use of fume hood and ventilating apparatuses | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 10-0112 | Title: Use of Nitrogen Generator | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 10-0114 | Title: Use of Air Velocity Meter | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 10-0117 | Title: Use of Standard Thermometer/Hygrometer | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 10-0118 | Title: Use of Humidity Control Cabinet | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 10-0119 | Title: Use of biological safety cabinet | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 10-0122 | Title: Use of Heating Magnetic Stirrer | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 10-0131 | Title: Operation and Maintenance of Ultraviolet lamp | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 10-0133 | Title: Use of Ice Machine | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: 13-0103 | Title: Infectious Sample Processing Flow | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: II-002 | Title: Quality Manual for Central Laboratory | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: IV-014 | Title: Record Checking and Report Preparation | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: IV-015 | Title: Numbering Rule of Project and Document for Bioanalytical Lab | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: IV-026 | Title: Preparation of validation and bioanalytical protocol for Bioanalytical Lab | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: IX-001 | Title: Procedure for Bioanalytical Method Validation and Quantification Using Chromatographic Methods, 生物樣品(層析法)方法確效與定量分析之操作程序 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: IX-010 | Title: Cleaning of lab glasswares, containers, and apparatuses, 試驗用容器與器具清洗 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: IX-011 | Title: Measuring uncertainty evaluating procedure, 量測不確定度作業與估算程序 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: IX-021 | Title: Procedure for Nonclinical Dose Formulation Analysis Method Validation and Quantification, 非臨床供試品方法確效與定量分析之操作程序 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: IX-022 | Title: Management of Master Schedule for Bioanalytical Laboratory, 藥動分析實驗室主進度表管理 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: IX-104 | Title: Analytical Method Validation of CL, 核心實驗室分析方法確效 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: IX-108 | Title: Quality control for testing, 測試品質管制 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: IX-112 | Title: Cross-check evaluation for outsourcing laboratory, 委外實驗室的交叉比對評估 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: IX-113 | Title: Project Through Test in Central Laboratory, 核心實驗室專案之案件流程測試 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: IX-115 | Title: Bioanalytical Method Validation and Quantification for Biomarkers in Central Laboratory, 核心實驗室生物檢體之生物標誌物分析方法確效與定量分析 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: IX-118 | Title: LCMSMS Project Create, LCMSMS 專案建立 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-CL-009 | Title: Rules for Company Courier and Specimen Transportation | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-CL-022 | Title: Management of Reagents and Consumables in Central Lab | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-A01 | Title: Control of Handwritten Signatures | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-A02 | Title: Protocol and Method Deviation | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-A03 | Title: Laboratory Change Management | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-C01 | Title: Training & Competency Assessment of Laboratory Personnel | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-E01 | Title: Monitoring and Control of Temperature and Humidity in Laboratory | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-R01 | Title: Use of Water Purification System | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-R02 | Title: Use of Electric Dry Oven | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-R03 | Title: Operation, Maintenance and Calibration of Walk-in Refrigerator | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-R04 | Title: Operation, Maintenance and Calibration of Microplate Washer | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-R05 | Title: Operation and Maintenance of Microscope | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-R06 | Title: Management of Refrigerator and Freezer | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-R07  | Title: Operation, Maintenance and Calibration of Centrifuge | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-V01 | Title: Archive Room Management | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LAB-V02 | Title: Management of Exl Spreadsheet for Data Processing | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-006 | Title: Biological Lab Safety Manual | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-007 | Title: P2(BSL-2) Laboratory Management | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-026 | Title: Receipt and Management of Chemical, Biological Reagent, Kit and Consumables | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-029 | Title: Management of Reference Standards and Standard Solutions | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-030 | Title: Management of Sample and Blank Matrix | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-032 | Title: Solution Preparation and Labeling | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-034 | Title: Equipment Management | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-039 | Title: Management and Maintenance of Labguard system | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-040 | Title: Use of Pipette | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-044 | Title: Operation, calibration and maintenance of Microplate Readers | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-047 | Title: Use of Thermostatic Water Bath | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-049 | Title: Operation and Maintenance of the Cell-culture Room | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-050 | Title: Use of Measuring Container | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-052 | Title: Operation, Maintenance and Calibration of Meso Scale Diagnostics QuickPlex SQ 120 Plate Reader | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-054 | Title: Use of Evaporation Concentrator | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-056 | Title: Operation, Maintenance and calibration of pH Meter | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-058 | Title: Operation, Calibration and Maintenance of Autoclave | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-061 | Title: Operation, Calibration and Maintenance of Luminex System | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-063 | Title: Clinical Blind Project Management | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LB-066 | Title: Operation, Maintenance and Calibration of Liquid Handing System | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLB-A01 | Title: Lab Management and Quality Management | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLB-A02 | Title: Investigation and Resolution of Unexpected Event | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLB-A03 | Title: Project Personnel Assignment for Analytical Laboratory | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLB-G01  | Title: Use and Management of LC Columns | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLB-M01 | Title: Method Validation for the Detection of Anti-drug Antibody(ies) (ADA) | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLB-M02 | Title: Sample Analysis Using Ligand Binding Assay | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLB-M03 | Title: Method Validation of LBA (Ligand Binding Assay) Biomarker Assay in Pre-clinical and Clinical Studies | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLB-M04 | Title: Method Validation of Ligand Binding Assay | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLB-M05 | Title: Method Validation for Detection of Neutralizing Anti-drug Antibody(ies) (NAb) | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLB-M06 | Title: Method Validation of ELISpot Assay in Pre-clinical and Clinical Studies | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLB-M07 | Title: Sample Analysis for Immunogenicity and Neutralizing Antibodies Assay | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLB-R01  | Title: Use of Air Compressor System | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLB-T01 | Title: Management and Maintenance of Watson LIMS | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLB-T02 | Title: Procedure for General Usage and Implementation of Watson LIMS | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLB-V01 | Title: Management of Working sheet and Notebook | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLB-V02 | Title: Archive Management | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLB-V03  | Title: Data Rounding and Concentration Unit Expression | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLC-M01 | Title: Management of Test Technical Manual | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLC-M02 | Title: Human PBMC Preparation  | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLC-M03 | Title: Cell Bank Management | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLC-M04 | Title: CryoPreservation of Cultured Cells | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLC-M05 | Title: Initiation and Maintenance of Cell Culture | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLC-P01 | Title: Central Laboratory Analytical Procedures | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLC-P02 | Title: Reporting of Analytical Result for Central Laboratory | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLC-P03  | Title: Proficiency Testing of Central Laboratory | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLC-R01 | Title: Operation, Maintenance and Calibration of QuantStudio™ 5 Real-Time PCR Systems | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLC-V01 | Title: Document Control for CAP Laboratories | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLO-K01 | Title: Project Supplement Management of Novotech Laboratory Service | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: SOP-LLO-Z01 | Title: Laboratory Project Management | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: VII-007 | Title: Specimen Management in Central Lab, 核心實驗室檢體管理 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: VII-011 | Title: Management of Specimen Shipping-out in Central Laboratory, 核心實驗室檢體送出管理 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: VII-012 | Title: The Procedure of Specimen Pick-up Management, 收檢管理程序 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-002 | Title: Use of AB SCIEX LC/MS/MS system, AB SCIEX LCMSMS 系統操作 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-008 | Title: Use of Balance, 天平操作 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-014 | Title: Use of vortex, 均勻震盪器操作 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-021 | Title: Use of Ultra-Sonicator, 超音波洗淨器操作 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-024 | Title: Use of fume hood and ventilating apparatuses, 局部排氣裝置操作 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-069 | Title: Use of Micro Pipette and Multipipette in Central Laboratory, | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-071 | Title: Use of glassware and container in Central Laboratory | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-074 | Title: Management of Instrument in Central Laboratory | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-075 | Title: Use of Sysmex CA-560 Automated Blood Coagulation Analyzer | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-078 | Title: Use of Nitrogen Generator, 氮氣製造機操作 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-079 | Title: SYSMEX XT-2000i Automated Hematology Analyzer Operation | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-080 | Title: Criteria for Reviewing and Histogram Interpretation of SYSMEX XT-2000i | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-082 | Title: Use of ARKRAY AUTION ELEVEN 4020 Urine Chemistry Analyzer | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-083 | Title: Use of biological safety cabinet, 生物安全操作台操作 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-086 | Title: The Operation Manual of Abbott m24sp Automated Nucleic Acid Extraction System | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-087 | Title: The Operation Manual of Abbott m2000rt Real-Time PCR Analyzer | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-091 | Title: Use of Roche cobas 6000 c501 Biochemical Analyzer | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-092 | Title: Use of Homogenizer, 高速分散均質機操作 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-093 | Title: Use of Air Velocity Meter, 風速計操作 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-095 | Title: Use of Roche cobas 6000 e601 Immunoassay Analyzer | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-096 | Title: Use of Agilent 1200 Series HPLC System, Agilent 1200 Series HPLC 系統操作 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-104 | Title: Use of Hotplate Stirrer, 加熱攪拌器操作 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-105 | Title: Use of Plate Sealer, 封膜機操作 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-106 | Title: Use of Pressure Manifold, 萃取槽操作 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-109 | Title: Use of Thermometer and Hygrometer, 溫度計及溼度計操作 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-111 | Title: Use of Stat FaxR 2200 Micro-plate incubator/shaker, Stat Fax® 2200 微盤震盪器操作 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-112 | Title: Use of BioSan PST-60HL-4 Plate Shaker-Thermostat | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-120 | Title: Use of Synergy HTX Multi-Mode Microplate Reader, Synergy HTX微量盤吸光讀值儀操作 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-121 | Title: Use of Electronic Balances Ionizer, 除靜電器操作 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-127 | Title: 3D Shaker, 3D旋轉混合儀 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: X-129 | Title: The Operation Manual of BD FACSCanto II Flow Cytometer | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: XI-018 | Title: LIMS Security, LIMS 安全 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: XI-019 | Title: OSUN LIMS Analysis manual, OSUN LIMS 分析手冊 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: XI-020 | Title: OSUN LIMS QC manual, OSUN LIMS 品管手冊 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: XIV-005 | Title: Environment, Health and Safety Policy of Central Laboratory, 核心實驗室環境、安全與健康政策 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: XIV-006 | Title: Safety use of electric and instrument in Central Laboratory, 核心實驗室電力與儀器設備使用安全 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: XIV-007 | Title: Safety use of chemicals and bio -materials in Central Laboratory, 核心實驗室化學品與感染性物質使用安全 | Group: nan
+- Business Unit: Laboratory | SOP Type: SOP | Number: XIV-008 | Title: Prevention and handling of accident and disaster in Central Laboratory, 核心實驗室意外事故與災害預防處理措施 | Group: nan
+- Business Unit: Learning and Development | SOP Type: SOP | Number: SOP-LND-001 | Title: Training Management | Group: nan
+- Business Unit: Legal | SOP Type: Policy | Number: POL-LGL-001 | Title: Electronic Signatures | Group: nan
+- Business Unit: Quality Assurance | SOP Type: Policy | Number: POL-QAD-001 | Title: Good Documentation Practices | Group: nan
+- Business Unit: Quality Assurance | SOP Type: Policy | Number: POL-QAD-002 | Title: Quality Management | Group: nan
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-001 | Title: Development and Control of Quality Documents | Group: nan
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-002 | Title: Planning, Conducting, Reporting and Closing Audits | Group: nan
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-003 | Title: Non-compliance and Quality Issue Management | Group: nan
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-004 | Title: Managing Client Audits and Qualifications | Group: nan
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-005 | Title: Regulatory Authority Inspections | Group: nan
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-006 | Title: Vendor Assessment and Approval | Group: nan
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-007 | Title: Scientific Fraud and/or Serious Misconduct | Group: nan
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-008 | Title: Client Feedback | Group: nan

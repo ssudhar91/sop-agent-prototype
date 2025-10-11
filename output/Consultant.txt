@@ -1,0 +1,39 @@
+SOPs for Consultant:
+
+- Business Unit: BioDesk | SOP Type: SOP | Number: SOP-BID-001 | Title: Project Application Approval by the IBC | Group: Drug Development Consulting
+- Business Unit: Clinical Operations | SOP Type: SOP | Number: SOP-CLO-011 | Title: GMO Study Management In Australia | Group: Drug Development Consulting
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-001 | Title: Business Continuity | Group: Drug Development Consulting
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-002 | Title: Confidentiality and Privacy Policy | Group: Drug Development Consulting
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-003 | Title: Whistleblower Policy | Group: Drug Development Consulting
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-004 | Title: Code of Conduct | Group: Drug Development Consulting
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-005 | Title: Anti-Bribery and Anti-Corruption | Group: Drug Development Consulting
+- Business Unit: Drug Development Consulting | SOP Type: SOP | Number: SOP-DDC-001 | Title: Role and Responsibility of a U.S. Agent and Authorized Representative | Group: Drug Development Consulting
+- Business Unit: Drug Development Consulting | SOP Type: SOP | Number: SOP-DDC-002 | Title: Role and Responsibilities for Structured Product Labeling Submissions | Group: Drug Development Consulting
+- Business Unit: Drug Development Consulting | SOP Type: SOP | Number: SOP-DDC-003 | Title: Maintaining FDA Correspondence Logs, FDA Correspondence Files, and Client Physical Records | Group: Drug Development Consulting
+- Business Unit: Drug Development Consulting | SOP Type: SOP | Number: SOP-DDC-004 | Title: Preparing Submission-Ready Documents | Group: Drug Development Consulting
+- Business Unit: Drug Development Consulting | SOP Type: SOP | Number: SOP-DDC-005 | Title: Investigator's Brochure Development | Group: Drug Development Consulting
+- Business Unit: Drug Development Consulting | SOP Type: SOP | Number: SOP-DDC-007 | Title: Maintaining Regulatory Submission Logs | Group: Drug Development Consulting
+- Business Unit: Drug Development Consulting | SOP Type: SOP | Number: SOP-DDC-008 | Title: Preparation, Tracking, and Electronic Submission of IND Safety Reports | Group: Drug Development Consulting
+- Business Unit: Drug Development Consulting | SOP Type: SOP | Number: SOP-DDC-009 | Title: Electronic Submissions to Health Authorities | Group: Drug Development Consulting
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITC-001 | Title: IT Acceptable Use | Group: Drug Development Consulting
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITC-002 | Title: Data Classification and Handling | Group: Drug Development Consulting
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITC-003 | Title: AI Acceptable Use Policy | Group: Drug Development Consulting
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITO-002 | Title: IT Security | Group: Drug Development Consulting
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITO-004 | Title: Information Security | Group: Drug Development Consulting
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITC-003 | Title: GxP Computer System Validation | Group: Drug Development Consulting
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITO-001 | Title: Implementation of Information Systems | Group: Drug Development Consulting
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITO-002 | Title: GxP Computer System Validation | Group: Drug Development Consulting
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITO-009 | Title: Data Access and Transfer | Group: Drug Development Consulting
+- Business Unit: Learning and Development | SOP Type: SOP | Number: SOP-LND-001 | Title: Training Management | Group: Drug Development Consulting
+- Business Unit: Legal | SOP Type: Policy | Number: POL-LGL-001 | Title: Electronic Signatures | Group: Drug Development Consulting
+- Business Unit: Medical Writing | SOP Type: SOP | Number: SOP-MDW-001 | Title: Medical Writing Document Development | Group: Drug Development Consulting
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-001 | Title: Study Document Translation | Group: Drug Development Consulting
+- Business Unit: Quality Assurance | SOP Type: Policy | Number: POL-QAD-001 | Title: Good Documentation Practices | Group: Drug Development Consulting
+- Business Unit: Quality Assurance | SOP Type: Policy | Number: POL-QAD-002 | Title: Quality Management | Group: Drug Development Consulting
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-001 | Title: Development and Control of Quality Documents | Group: Drug Development Consulting
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-003 | Title: Non-compliance and Quality Issue Management | Group: Drug Development Consulting
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-004 | Title: Managing Client Audits and Qualifications | Group: Drug Development Consulting
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-005 | Title: Regulatory Authority Inspections | Group: Drug Development Consulting
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-007 | Title: Scientific Fraud and/or Serious Misconduct | Group: Drug Development Consulting
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-008 | Title: Client Feedback | Group: Drug Development Consulting
+- Business Unit: Regulatory Affairs | SOP Type: SOP | Number: SOP-RGA-003 | Title: Management of Regulatory Information and Intelligence | Group: Drug Development Consulting

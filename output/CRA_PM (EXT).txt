@@ -1,0 +1,21 @@
+SOPs for CRA/PM (EXT):
+
+- Business Unit: Clinical Operations | SOP Type: SOP | Number: SOP-CLO-001 | Title: Investigator Identification and Site Selection Visit | Group: External Contractors
+- Business Unit: Clinical Operations | SOP Type: SOP | Number: SOP-CLO-002 | Title: Informed Consent  | Group: External Contractors
+- Business Unit: Clinical Operations | SOP Type: SOP | Number: SOP-CLO-003 | Title: Site Budgets and Contracts | Group: External Contractors
+- Business Unit: Clinical Operations | SOP Type: SOP | Number: SOP-CLO-004 | Title: Institutional Review Board Independent Ethics Committee Submission | Group: External Contractors
+- Business Unit: Clinical Operations | SOP Type: SOP | Number: SOP-CLO-005 | Title: Investigational Product Management | Group: External Contractors
+- Business Unit: Clinical Operations | SOP Type: SOP | Number: SOP-CLO-006 | Title: Site Initiation Visit | Group: External Contractors
+- Business Unit: Clinical Operations | SOP Type: SOP | Number: SOP-CLO-007 | Title: Interim Monitoring Visit | Group: External Contractors
+- Business Unit: Clinical Operations | SOP Type: SOP | Number: SOP-CLO-008 | Title: Site Close Out Visit | Group: External Contractors
+- Business Unit: Clinical Operations | SOP Type: SOP | Number: SOP-CLO-013 | Title: Financial Disclosure | Group: External Contractors
+- Business Unit: Pharmacovigilance | SOP Type: SOP | Number: SOP-PHV-003 | Title: Safety Reporting - Regulatory Authority, Investigators and Ethics Committee | Group: External Contractors
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-001 | Title: Study Document Translation | Group: External Contractors
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-004 | Title: Clinical Trial Document Filing and Management | Group: External Contractors
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-006 | Title: Protocol Deviation and Serious Breaches Management | Group: External Contractors
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-008 | Title: Project Team Training and Transition | Group: External Contractors
+- Business Unit: Quality Assurance | SOP Type: Policy | Number: POL-QAD-001 | Title: Good Documentation Practices | Group: External Contractors
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-003 | Title: Non-compliance and Quality Issue Management | Group: External Contractors
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-007 | Title: Scientific Fraud and/or Serious Misconduct | Group: External Contractors
+- Business Unit: Regulatory Affairs | SOP Type: SOP | Number: SOP-RGA-001 | Title: Application to Regulatory Authorities for Approval of Clinical Trials | Group: External Contractors
+- Business Unit: Regulatory Affairs | SOP Type: SOP | Number: SOP-RGA-002 | Title: Regulatory Green Light Approval for IP Release and Site Activation | Group: External Contractors

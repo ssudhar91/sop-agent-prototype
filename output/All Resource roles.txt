@@ -1,0 +1,5 @@
+SOPs for All Resource roles:
+
+- Business Unit: Administrative Services | SOP Type: Policy | Number: POL-ADS-001 | Title: Office Security | Group: Administrative Services
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITC-002 | Title: Data Classification and Handling | Group: Administrative Services
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-008 | Title: Client Feedback | Group: Administrative Services

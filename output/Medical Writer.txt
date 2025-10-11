@@ -1,0 +1,35 @@
+SOPs for Medical Writer:
+
+- Business Unit: Clinical Operations | SOP Type: SOP | Number: SOP-CLO-010 | Title: Conducting Regulatory Post Marketing Surviellance Project in Korea | Group: Medical Writing Services
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-001 | Title: Business Continuity | Group: Medical Writing Services
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-002 | Title: Confidentiality and Privacy Policy | Group: Medical Writing Services
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-003 | Title: Whistleblower Policy | Group: Medical Writing Services
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-004 | Title: Code of Conduct | Group: Medical Writing Services
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-005 | Title: Anti-Bribery and Anti-Corruption | Group: Medical Writing Services
+- Business Unit: Drug Development Consulting | SOP Type: SOP | Number: SOP-DDC-005 | Title: Investigator's Brochure Development | Group: Medical Writing Services
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITC-001 | Title: IT Acceptable Use | Group: Medical Writing Services
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITC-002 | Title: Data Classification and Handling | Group: Medical Writing Services
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITC-003 | Title: AI Acceptable Use Policy | Group: Medical Writing Services
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITO-002 | Title: IT Security | Group: Medical Writing Services
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITO-004 | Title: Information Security | Group: Medical Writing Services
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITC-003 | Title: GxP Computer System Validation | Group: Medical Writing Services
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITO-001 | Title: Implementation of Information Systems | Group: Medical Writing Services
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITO-002 | Title: GxP Computer System Validation | Group: Medical Writing Services
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITO-009 | Title: Data Access and Transfer | Group: Medical Writing Services
+- Business Unit: Learning and Development | SOP Type: SOP | Number: SOP-LND-001 | Title: Training Management | Group: Medical Writing Services
+- Business Unit: Legal | SOP Type: Policy | Number: POL-LGL-001 | Title: Electronic Signatures | Group: Medical Writing Services
+- Business Unit: Medical Writing | SOP Type: SOP | Number: SOP-MDW-001 | Title: Medical Writing Document Development | Group: Medical Writing Services
+- Business Unit: Medical Writing | SOP Type: SOP | Number: SOP-MDW-002 | Title: Protocol Development | Group: Medical Writing Services
+- Business Unit: Medical Writing | SOP Type: SOP | Number: SOP-MDW-003 | Title: Clinical Study Report Development | Group: Medical Writing Services
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-001 | Title: Study Document Translation | Group: Medical Writing Services
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-004 | Title: Clinical Trial Document Filing and Management | Group: Medical Writing Services
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-006 | Title: Protocol Deviation and Serious Breaches Management | Group: Medical Writing Services
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-009 | Title: Conducting Bioavailability or Bioequivalence Studies | Group: Medical Writing Services
+- Business Unit: Quality Assurance | SOP Type: Policy | Number: POL-QAD-001 | Title: Good Documentation Practices | Group: Medical Writing Services
+- Business Unit: Quality Assurance | SOP Type: Policy | Number: POL-QAD-002 | Title: Quality Management | Group: Medical Writing Services
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-001 | Title: Development and Control of Quality Documents | Group: Medical Writing Services
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-003 | Title: Non-compliance and Quality Issue Management | Group: Medical Writing Services
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-004 | Title: Managing Client Audits and Qualifications | Group: Medical Writing Services
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-005 | Title: Regulatory Authority Inspections | Group: Medical Writing Services
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-007 | Title: Scientific Fraud and/or Serious Misconduct | Group: Medical Writing Services
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-008 | Title: Client Feedback | Group: Medical Writing Services

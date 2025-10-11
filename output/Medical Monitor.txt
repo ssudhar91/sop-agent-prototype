@@ -1,0 +1,40 @@
+SOPs for Medical Monitor:
+
+- Business Unit: Clinical Operations | SOP Type: SOP | Number: SOP-CLO-010 | Title: Conducting Regulatory Post Marketing Surviellance Project in Korea | Group: Medical Services and Strategy
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-001 | Title: Business Continuity | Group: Medical Services and Strategy
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-002 | Title: Confidentiality and Privacy Policy | Group: Medical Services and Strategy
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-003 | Title: Whistleblower Policy | Group: Medical Services and Strategy
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-004 | Title: Code of Conduct | Group: Medical Services and Strategy
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-005 | Title: Anti-Bribery and Anti-Corruption | Group: Medical Services and Strategy
+- Business Unit: Data Management | SOP Type: SOP | Number: SOP-DMG-006 | Title: Centralized Monitoring | Group: Medical Services and Strategy
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITC-001 | Title: IT Acceptable Use | Group: Medical Services and Strategy
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITC-002 | Title: Data Classification and Handling | Group: Medical Services and Strategy
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITC-003 | Title: AI Acceptable Use Policy | Group: Medical Services and Strategy
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITO-002 | Title: IT Security | Group: Medical Services and Strategy
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITO-004 | Title: Information Security | Group: Medical Services and Strategy
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITC-003 | Title: GxP Computer System Validation | Group: Medical Services and Strategy
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITO-001 | Title: Implementation of Information Systems | Group: Medical Services and Strategy
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITO-002 | Title: GxP Computer System Validation | Group: Medical Services and Strategy
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITO-009 | Title: Data Access and Transfer | Group: Medical Services and Strategy
+- Business Unit: Learning and Development | SOP Type: SOP | Number: SOP-LND-001 | Title: Training Management | Group: Medical Services and Strategy
+- Business Unit: Legal | SOP Type: Policy | Number: POL-LGL-001 | Title: Electronic Signatures | Group: Medical Services and Strategy
+- Business Unit: Medical Monitoring | SOP Type: SOP | Number: SOP-MDM-001 | Title: Medical Monitoring | Group: Medical Services and Strategy
+- Business Unit: Medical Monitoring | SOP Type: SOP | Number: SOP-MDM-002 | Title: Management of a Data Safety Monitoring Board or Safety Review Committee | Group: Medical Services and Strategy
+- Business Unit: Medical Writing | SOP Type: SOP | Number: SOP-MDW-002 | Title: Protocol Development | Group: Medical Services and Strategy
+- Business Unit: Medical Writing | SOP Type: SOP | Number: SOP-MDW-003 | Title: Clinical Study Report Development | Group: Medical Services and Strategy
+- Business Unit: Pharmacovigilance | SOP Type: SOP | Number: SOP-PHV-001 | Title: Case Processing | Group: Medical Services and Strategy
+- Business Unit: Pharmacovigilance | SOP Type: SOP | Number: SOP-PHV-004 | Title: Case Evaluation | Group: Medical Services and Strategy
+- Business Unit: Pharmacovigilance | SOP Type: SOP | Number: SOP-PHV-005 | Title: Signal Detection and Management | Group: Medical Services and Strategy
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-003 | Title: Project Plans | Group: Medical Services and Strategy
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-004 | Title: Clinical Trial Document Filing and Management | Group: Medical Services and Strategy
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-005 | Title: Quality Risk Planning and Management | Group: Medical Services and Strategy
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-006 | Title: Protocol Deviation and Serious Breaches Management | Group: Medical Services and Strategy
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-008 | Title: Project Team Training and Transition | Group: Medical Services and Strategy
+- Business Unit: Quality Assurance | SOP Type: Policy | Number: POL-QAD-001 | Title: Good Documentation Practices | Group: Medical Services and Strategy
+- Business Unit: Quality Assurance | SOP Type: Policy | Number: POL-QAD-002 | Title: Quality Management | Group: Medical Services and Strategy
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-001 | Title: Development and Control of Quality Documents | Group: Medical Services and Strategy
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-003 | Title: Non-compliance and Quality Issue Management | Group: Medical Services and Strategy
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-004 | Title: Managing Client Audits and Qualifications | Group: Medical Services and Strategy
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-005 | Title: Regulatory Authority Inspections | Group: Medical Services and Strategy
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-007 | Title: Scientific Fraud and/or Serious Misconduct | Group: Medical Services and Strategy
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-008 | Title: Client Feedback | Group: Medical Services and Strategy

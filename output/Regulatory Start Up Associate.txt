@@ -1,0 +1,44 @@
+SOPs for Regulatory Start Up Associate:
+
+- Business Unit: Clinical Operations | SOP Type: SOP | Number: SOP-CLO-002 | Title: Informed Consent  | Group: Regulatory Affairs
+- Business Unit: Clinical Operations | SOP Type: SOP | Number: SOP-CLO-003 | Title: Site Budgets and Contracts | Group: Regulatory Affairs
+- Business Unit: Clinical Operations | SOP Type: SOP | Number: SOP-CLO-004 | Title: Institutional Review Board Independent Ethics Committee Submission | Group: Regulatory Affairs
+- Business Unit: Clinical Operations | SOP Type: SOP | Number: SOP-CLO-005 | Title: Investigational Product Management | Group: Regulatory Affairs
+- Business Unit: Clinical Operations | SOP Type: SOP | Number: SOP-CLO-010 | Title: Conducting Regulatory Post Marketing Surviellance Project in Korea | Group: Regulatory Affairs
+- Business Unit: Clinical Operations | SOP Type: SOP | Number: SOP-CLO-011 | Title: GMO Study Management In Australia | Group: Regulatory Affairs
+- Business Unit: Clinical Operations | SOP Type: SOP | Number: SOP-CLO-013 | Title: Financial Disclosure | Group: Regulatory Affairs
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-001 | Title: Business Continuity | Group: Regulatory Affairs
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-002 | Title: Confidentiality and Privacy Policy | Group: Regulatory Affairs
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-003 | Title: Whistleblower Policy | Group: Regulatory Affairs
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-004 | Title: Code of Conduct | Group: Regulatory Affairs
+- Business Unit: Compliance | SOP Type: Policy | Number: POL-COM-005 | Title: Anti-Bribery and Anti-Corruption | Group: Regulatory Affairs
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITC-001 | Title: IT Acceptable Use | Group: Regulatory Affairs
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITC-002 | Title: Data Classification and Handling | Group: Regulatory Affairs
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITC-003 | Title: AI Acceptable Use Policy | Group: Regulatory Affairs
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITO-002 | Title: IT Security | Group: Regulatory Affairs
+- Business Unit: Information Technology | SOP Type: Policy | Number: POL-ITO-004 | Title: Information Security | Group: Regulatory Affairs
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITC-003 | Title: GxP Computer System Validation | Group: Regulatory Affairs
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITO-001 | Title: Implementation of Information Systems | Group: Regulatory Affairs
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITO-002 | Title: GxP Computer System Validation | Group: Regulatory Affairs
+- Business Unit: Information Technology | SOP Type: SOP | Number: SOP-ITO-009 | Title: Data Access and Transfer | Group: Regulatory Affairs
+- Business Unit: Learning and Development | SOP Type: SOP | Number: SOP-LND-001 | Title: Training Management | Group: Regulatory Affairs
+- Business Unit: Legal | SOP Type: Policy | Number: POL-LGL-001 | Title: Electronic Signatures | Group: Regulatory Affairs
+- Business Unit: Pharmacovigilance | SOP Type: SOP | Number: SOP-PHV-003 | Title: Safety Reporting - Regulatory Authority, Investigators and Ethics Committee | Group: Regulatory Affairs
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-001 | Title: Study Document Translation | Group: Regulatory Affairs
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-003 | Title: Project Plans | Group: Regulatory Affairs
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-004 | Title: Clinical Trial Document Filing and Management | Group: Regulatory Affairs
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-005 | Title: Quality Risk Planning and Management | Group: Regulatory Affairs
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-006 | Title: Protocol Deviation and Serious Breaches Management | Group: Regulatory Affairs
+- Business Unit: Project Management | SOP Type: SOP | Number: SOP-PMG-008 | Title: Project Team Training and Transition | Group: Regulatory Affairs
+- Business Unit: Quality Assurance | SOP Type: Policy | Number: POL-QAD-001 | Title: Good Documentation Practices | Group: Regulatory Affairs
+- Business Unit: Quality Assurance | SOP Type: Policy | Number: POL-QAD-002 | Title: Quality Management | Group: Regulatory Affairs
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-001 | Title: Development and Control of Quality Documents | Group: Regulatory Affairs
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-003 | Title: Non-compliance and Quality Issue Management | Group: Regulatory Affairs
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-004 | Title: Managing Client Audits and Qualifications | Group: Regulatory Affairs
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-005 | Title: Regulatory Authority Inspections | Group: Regulatory Affairs
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-007 | Title: Scientific Fraud and/or Serious Misconduct | Group: Regulatory Affairs
+- Business Unit: Quality Assurance | SOP Type: SOP | Number: SOP-QAD-008 | Title: Client Feedback | Group: Regulatory Affairs
+- Business Unit: Regulatory Affairs | SOP Type: SOP | Number: SOP-RGA-001 | Title: Application to Regulatory Authorities for Approval of Clinical Trials | Group: Regulatory Affairs
+- Business Unit: Regulatory Affairs | SOP Type: SOP | Number: SOP-RGA-002 | Title: Regulatory Green Light Approval for IP Release and Site Activation | Group: Regulatory Affairs
+- Business Unit: Regulatory Affairs | SOP Type: SOP | Number: SOP-RGA-003 | Title: Management of Regulatory Information and Intelligence | Group: Regulatory Affairs
+- Business Unit: Regulatory Affairs | SOP Type: SOP | Number: SOP-RGA-004 | Title: HGRAC Submission and Maintenance in China | Group: Regulatory Affairs
