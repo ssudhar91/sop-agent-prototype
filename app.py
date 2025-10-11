@@ -1,67 +1,92 @@
-# app.py
-import streamlit as st
 import os
-import openai
+import pickle
+import streamlit as st
+import pandas as pd
 
-# -------------------------
-# Config
-# -------------------------
-OUTPUT_DIR = "output"
+# LangChain & OpenAI imports
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import FAISS
+from langchain.chains import RetrievalQA
+from langchain.chat_models import ChatOpenAI
 
-st.set_page_config(page_title="Novotech SOP Finder - Agentic AI", layout="wide")
-st.title("Novotech SOP Finder — Agentic AI with GPT-5")
+st.set_page_config(page_title="Agentic AI – SOP Query", layout="wide")
+st.title("Agentic AI – SOP Query Interface")
 
-# -------------------------
-# Load preprocessed SOP files
-# -------------------------
-all_files = [f for f in os.listdir(OUTPUT_DIR) if f.endswith(".txt")]
-if not all_files:
-    st.error("No preprocessed SOP files found in 'output/' folder. Upload them first.")
-    st.stop()
+# -------------------------------
+# 1️⃣ Set up KB paths
+# -------------------------------
+base_dir = os.path.dirname(__file__)
+output_dir = os.path.join(base_dir, "output")
+kb_pickle = os.path.join(base_dir, "preprocessed_kb.pkl")
 
-# Sidebar: select roles
-st.sidebar.header("Select Roles")
-selected_roles = st.sidebar.multiselect("Choose roles to include", options=all_files, default=all_files[:5])
+# -------------------------------
+# 2️⃣ Load or preprocess KB
+# -------------------------------
+if os.path.exists(kb_pickle):
+    with open(kb_pickle, "rb") as f:
+        kb_data = pickle.load(f)
+    st.info("Loaded preprocessed KB successfully.")
+else:
+    st.info("Preprocessing KB from files...")
+    kb_data = {}
+    
+    for file in os.listdir(output_dir):
+        if file.endswith(".txt"):
+            with open(os.path.join(output_dir, file), "r") as f:
+                text = f.read()
+            splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+            kb_data[file] = splitter.split_text(text)
+        elif file.endswith(".xlsx"):
+            xls = pd.ExcelFile(os.path.join(output_dir, file))
+            for sheet in xls.sheet_names:
+                df = xls.parse(sheet)
+                text = "\n".join(df.astype(str).values.flatten())
+                splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+                kb_data[f"{file}-{sheet}"] = splitter.split_text(text)
+    
+    with open(kb_pickle, "wb") as f:
+        pickle.dump(kb_data, f)
+    st.success("KB preprocessing completed and saved.")
 
-# Read selected SOP files
-sop_context = []
-for role_file in selected_roles:
-    file_path = os.path.join(OUTPUT_DIR, role_file)
-    with open(file_path, "r", encoding="utf-8") as f:
-        lines = f.readlines()
-        # skip empty lines
-        lines = [l.strip() for l in lines if l.strip()]
-        sop_context.extend(lines)
+# -------------------------------
+# 3️⃣ Create or load embeddings
+# -------------------------------
+embeddings_pickle = os.path.join(base_dir, "vectorstores.pkl")
 
-if not sop_context:
-    st.warning("No SOP lines found for selected roles.")
-    st.stop()
+if os.path.exists(embeddings_pickle):
+    with open(embeddings_pickle, "rb") as f:
+        vectorstores = pickle.load(f)
+    st.info("Loaded vectorstore embeddings successfully.")
+else:
+    st.info("Creating embeddings for KB...")
+    embeddings = OpenAIEmbeddings()  # Ensure your API key is set in env
+    vectorstores = {}
+    for key, chunks in kb_data.items():
+        vectorstores[key] = FAISS.from_texts(chunks, embeddings)
+    with open(embeddings_pickle, "wb") as f:
+        pickle.dump(vectorstores, f)
+    st.success("Embeddings created and saved.")
 
-# Display SOP lines (first 100)
-st.subheader("SOP Lines for Selected Roles")
-st.text("\n".join(sop_context[:100]))
+# -------------------------------
+# 4️⃣ User query interface
+# -------------------------------
+query = st.text_input("Ask something about any role or SOP:")
 
-# -------------------------
-# GPT-5 Question Answering
-# -------------------------
-st.subheader("Ask a question about the SOPs")
-user_question = st.text_input("Type your question here:")
+if query:
+    # Merge all vectorstores for search (or select specific role)
+    all_indices = list(vectorstores.values())
+    
+    # For demo, combine all indices into one retriever
+    combined_docs = FAISS.merge_from([v for v in all_indices])
+    retriever = combined_docs.as_retriever()
 
-if user_question:
-    if "OPENAI_API_KEY" not in st.secrets:
-        st.error("Please add your OPENAI_API_KEY in Streamlit secrets to enable GPT-5.")
-    else:
-        openai.api_key = st.secrets["OPENAI_API_KEY"]
-        # Prepare prompt
-        prompt = f"Answer the question based on the SOP context below:\n\nContext:\n" \
-                 f"{sop_context[:200]}\n\nQuestion: {user_question}\nAnswer clearly."
-        try:
-            response = openai.ChatCompletion.create(
-                model="gpt-5-mini",
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.2
-            )
-            answer = response['choices'][0]['message']['content']
-            st.markdown(f"**GPT-5 Answer:** {answer}")
-        except Exception as e:
-            st.error(f"Error calling GPT-5 API: {e}")
+    qa = RetrievalQA.from_chain_type(
+        llm=ChatOpenAI(temperature=0),
+        chain_type="stuff",
+        retriever=retriever
+    )
+
+    response = qa.run(query)
+    st.markdown("**Agentic AI says:**")
+    st.write(response)
