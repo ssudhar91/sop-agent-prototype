@@ -7,17 +7,17 @@ import pandas as pd
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
-from langchain.chains import RetrievalQA
+from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
 
 # -------------------------------
-# 1️⃣ Streamlit Page Setup
+# 1️⃣ Streamlit Setup
 # -------------------------------
 st.set_page_config(page_title="Agentic AI – SOP Query", layout="wide")
 st.title("Agentic AI – SOP Query Interface")
 
 # -------------------------------
-# 2️⃣ Setup file paths (Codespace-safe)
+# 2️⃣ Setup paths (Codespace-safe)
 # -------------------------------
 base_dir = os.path.dirname(__file__)
 output_dir = os.path.join(base_dir, "output")
@@ -65,7 +65,7 @@ if os.path.exists(embeddings_pickle):
     st.info("Loaded vectorstore embeddings successfully.")
 else:
     st.info("Creating embeddings for KB...")
-    embeddings = OpenAIEmbeddings()  # requires OPENAI_API_KEY in environment
+    embeddings = OpenAIEmbeddings()  # Make sure OPENAI_API_KEY is set
     vectorstores = {}
     for key, chunks in kb_data.items():
         vectorstores[key] = FAISS.from_texts(chunks, embeddings)
@@ -74,13 +74,14 @@ else:
     st.success("Embeddings created and saved.")
 
 # -------------------------------
-# 5️⃣ User selects a role (optional) or queries all
+# 5️⃣ User selects a role (optional) and queries SOPs
 # -------------------------------
 roles = list(vectorstores.keys())
 selected_role = st.selectbox("Select a role (optional, 'All' searches all SOPs):", ["All"] + roles)
 query = st.text_input("Ask a question about SOPs:")
 
 if query:
+    # Choose retriever
     if selected_role == "All":
         all_indices = list(vectorstores.values())
         combined = FAISS.merge_from(all_indices)
@@ -88,12 +89,21 @@ if query:
     else:
         retriever = vectorstores[selected_role].as_retriever()
     
-    qa = RetrievalQA.from_chain_type(
-        llm=ChatOpenAI(temperature=0),
-        chain_type="stuff",
-        retriever=retriever
+    # -------------------------------
+    # 6️⃣ Conversational Retrieval Chain
+    # -------------------------------
+    qa_chain = ConversationalRetrievalChain.from_llm(
+        llm=ChatOpenAI(temperature=0.2),  # factual but natural
+        retriever=retriever,
+        return_source_documents=False
     )
-    
-    response = qa.run(query)
+
+    response = qa_chain.run(query)
     st.markdown("**Agentic AI says:**")
     st.write(response)
+
+    # Optional: debug retrieved chunks
+    # docs = retriever.get_relevant_documents(query)
+    # st.write("Top retrieved chunks (debug):")
+    # for doc in docs[:3]:
+    #     st.write(doc.page_content)
