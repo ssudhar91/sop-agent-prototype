@@ -3,11 +3,11 @@ import pickle
 import streamlit as st
 import pandas as pd
 
-# LangChain & OpenAI
+# LangChain imports
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
-from langchain.chains import ConversationalRetrievalChain
+from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatOpenAI
 
 # -------------------------------
@@ -42,6 +42,7 @@ else:
         if file.endswith(".txt"):
             with open(file_path, "r") as f:
                 text = f.read()
+            # split into chunks
             splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
             kb_data[file] = splitter.split_text(text)
         elif file.endswith(".xlsx"):
@@ -65,7 +66,7 @@ if os.path.exists(embeddings_pickle):
     st.info("Loaded vectorstore embeddings successfully.")
 else:
     st.info("Creating embeddings for KB...")
-    embeddings = OpenAIEmbeddings()  # Make sure OPENAI_API_KEY is set
+    embeddings = OpenAIEmbeddings()  # requires OPENAI_API_KEY in Codespaces
     vectorstores = {}
     for key, chunks in kb_data.items():
         vectorstores[key] = FAISS.from_texts(chunks, embeddings)
@@ -74,14 +75,14 @@ else:
     st.success("Embeddings created and saved.")
 
 # -------------------------------
-# 5️⃣ User selects a role (optional) and queries SOPs
+# 5️⃣ User selects role and queries SOPs
 # -------------------------------
 roles = list(vectorstores.keys())
 selected_role = st.selectbox("Select a role (optional, 'All' searches all SOPs):", ["All"] + roles)
 query = st.text_input("Ask a question about SOPs:")
 
 if query:
-    # Choose retriever
+    # create retriever
     if selected_role == "All":
         all_indices = list(vectorstores.values())
         combined = FAISS.merge_from(all_indices)
@@ -90,10 +91,11 @@ if query:
         retriever = vectorstores[selected_role].as_retriever()
     
     # -------------------------------
-    # 6️⃣ Conversational Retrieval Chain
+    # 6️⃣ Connect retriever to LLM using RetrievalQA
     # -------------------------------
-    qa_chain = ConversationalRetrievalChain.from_llm(
-        llm=ChatOpenAI(temperature=0.2),  # factual but natural
+    qa_chain = RetrievalQA.from_chain_type(
+        llm=ChatOpenAI(temperature=0.2),  # factual, natural answers
+        chain_type="stuff",
         retriever=retriever,
         return_source_documents=False
     )
@@ -104,6 +106,6 @@ if query:
 
     # Optional: debug retrieved chunks
     # docs = retriever.get_relevant_documents(query)
-    # st.write("Top retrieved chunks (debug):")
+    # st.write("Top retrieved chunks for debug:")
     # for doc in docs[:3]:
     #     st.write(doc.page_content)
