@@ -2,18 +2,11 @@ import os
 import streamlit as st
 import pandas as pd
 
-# LangChain imports
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import FAISS
-from langchain.chains import RetrievalQA
-from langchain.chat_models import ChatOpenAI
-
 # -------------------------------
 # Streamlit Setup
 # -------------------------------
-st.set_page_config(page_title="Agentic AI – Excel SOP Query", layout="wide")
-st.title("Agentic AI – Excel SOP Query Interface")
+st.set_page_config(page_title="Agentic AI – Excel SOP Query (No LLM)", layout="wide")
+st.title("Agentic AI – Excel SOP Query (No LLM)")
 
 # -------------------------------
 # Path to master Excel file
@@ -44,33 +37,18 @@ else:
     query = st.text_input("Ask a question about SOP:")
 
     if query:
-        # -------------------------------
-        # Split text into chunks
-        # -------------------------------
         text = role_texts[selected_role]
-        splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-        chunks = splitter.split_text(text)
+        lower_query = query.lower()
 
         # -------------------------------
-        # Create embeddings and retriever
+        # Simple keyword-based search
         # -------------------------------
-        embeddings = OpenAIEmbeddings()  # Make sure OPENAI_API_KEY is set
-        vectorstore = FAISS.from_texts(chunks, embeddings)
-        retriever = vectorstore.as_retriever()
+        matching_lines = [line for line in text.split("\n") if lower_query in line.lower()]
 
-        # -------------------------------
-        # Connect to LLM via RetrievalQA
-        # -------------------------------
-        qa = RetrievalQA.from_chain_type(
-            llm=ChatOpenAI(temperature=0.2),
-            chain_type="stuff",
-            retriever=retriever,
-            return_source_documents=False
-        )
-
-        # -------------------------------
-        # Get AI response
-        # -------------------------------
-        response = qa.run(query)
-        st.markdown("**Agentic AI says:**")
-        st.write(response)
+        st.markdown("**Agentic AI says (Keyword Match Mode):**")
+        if matching_lines:
+            # Show top 5 matching lines
+            for line in matching_lines[:5]:
+                st.write(f"- {line}")
+        else:
+            st.write("No matching information found in this role's SOP.")
