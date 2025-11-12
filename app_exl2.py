@@ -9,7 +9,7 @@ from typing import List, Set
 st.set_page_config(page_title="Novotech Functional Training", layout="wide")
 st.title("Novotech Functional Training")
 
-EXCEL_PATH = "/mnt/data/PR_Audience_LearningItem_Export.xlsx"
+excel_file_path = os.path.join(base_dir, "data", "PR_Audience_LearningItem_Export.xlsx")
 
 if not os.path.exists(EXCEL_PATH):
     st.error(f"Expected Excel file not found at {EXCEL_PATH}")
