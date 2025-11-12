@@ -19,32 +19,29 @@ if not os.path.exists(excel_file_path):
     st.error(f"Master Excel file not found at {excel_file_path}")
     st.stop()
 
-st.write(f"Using master Excel file: {excel_file_path}")
-
 # -------------------------------
-# Settings: header rows (0-indexed)
+# Settings
 # -------------------------------
 HEADER_GROUP_ROW = 0
 HEADER_COLS_ROW = 2
-DATA_START_ROW = 3  # zero-indexed (Excel row 4)
+DATA_START_ROW = 3
 
 category_map = {
-    "Within 2 weeks": 1,    # All staff SOPs
-    "Within 90 days": 2,    # Role-based SOPs
-    "Before task": 3        # Optional: before a particular task
+    "Within 2 weeks": 1,
+    "Within 90 days": 2,
+    "Before task": 3
 }
+
+regions = ["china", "korea", "taiwan", "hong kong", "india", "us", "uk"]
 
 # -------------------------------
 # Helper functions
+# -------------------------------
 def pick_column(df, candidates):
-    """Return the first matching column name from candidates (case-insensitive)."""
     cols_lower = {c.lower(): c for c in df.columns}
     for cand in candidates:
-        if cand is None:
-            continue
-        key = cand.lower()
-        if key in cols_lower:
-            return cols_lower[key]
+        if cand and cand.lower() in cols_lower:
+            return cols_lower[cand.lower()]
     return None
 
 def to_int_safe(v):
@@ -52,43 +49,65 @@ def to_int_safe(v):
         if pd.isna(v):
             return None
         if isinstance(v, str):
-            v2 = v.strip()
-            if v2 == "":
+            v = v.strip()
+            if v == "":
                 return None
-            return int(float(v2))
+            return int(float(v))
         return int(v)
     except Exception:
         return None
 
+def detect_regions(text):
+    text = str(text).lower()
+    found = [r for r in regions if r in text]
+    return ", ".join(found) if found else ""
+
+def checkbox_group_inline(values, key_prefix: str, default=True):
+    """
+    Returns list of values that are checked.
+    Each checkbox key is deterministic and unique.
+    """
+    selected = []
+    for i, v in enumerate(values):
+        v_display = "(blank)" if (pd.isna(v) or str(v).strip() == "") else str(v)
+        key = f"{key_prefix}__{i}"
+        if key not in st.session_state:
+            st.session_state[key] = default
+        checked = st.checkbox(v_display, value=st.session_state[key], key=key)
+        # keep session_state updated to reflect the current checked value
+        st.session_state[key] = checked
+        if checked:
+            selected.append(v)
+    return selected
+
 # -------------------------------
-# Load workbook and list sheets
+# Load workbook (auto-select first sheet)
 # -------------------------------
 xls = pd.ExcelFile(excel_file_path)
 sheets = xls.sheet_names
-sheet_choice = st.selectbox("Choose sheet:", sheets)
-
-# Load the selected sheet with no header to access the group row and header row
-raw = pd.read_excel(excel_file_path, sheet_name=sheet_choice, header=None, dtype=object)
-
-# Basic sanity checks
-if raw.shape[0] <= HEADER_COLS_ROW:
-    st.error("The selected sheet doesn't have the expected header rows. Check the sheet layout.")
+if not sheets:
+    st.error("No sheets found in Excel file.")
     st.stop()
 
-# Extract group row and header (roles) row
+# AUTOMATIC: pick first sheet (removed "Choose sheet" UI)
+sheet_choice = sheets[0]
+st.markdown(f"**Using sheet:** {sheet_choice}")
+
+raw = pd.read_excel(excel_file_path, sheet_name=sheet_choice, header=None, dtype=object)
+if raw.shape[0] <= HEADER_COLS_ROW:
+    st.error("The selected sheet doesn't have the expected header rows.")
+    st.stop()
+
 group_row = raw.iloc[HEADER_GROUP_ROW].copy().fillna(method="ffill")
 header_row = raw.iloc[HEADER_COLS_ROW].astype(str).tolist()
-
-# Build data frame with header_row as columns and data starting from DATA_START_ROW
 data_df = raw.iloc[DATA_START_ROW:].copy().reset_index(drop=True)
 data_df.columns = header_row
 
-# Roles are columns from index 4 (E) onward per your spec
 if len(header_row) <= 4:
-    st.error("Unable to detect role columns: sheet doesn't have columns beyond column E.")
+    st.error("Unable to detect role columns beyond column E.")
     st.stop()
 
-# Build group -> list of (col_idx, role_name) mapping using positions to avoid duplicate-label issues
+# Build group-to-role mapping
 groups_map = {}
 for col_idx, col_name in enumerate(header_row):
     if col_idx < 4:
@@ -98,250 +117,186 @@ for col_idx, col_name in enumerate(header_row):
     if group_name == "" or group_name.lower() in ("nan", "none"):
         group_name = "Ungrouped"
     groups_map.setdefault(group_name, []).append((col_idx, col_name))
-
-# Sort groups for UI
 groups_sorted = sorted(groups_map.keys())
 
 # -------------------------------
-# UI: choose group then role
+# UI selections (main left area)
 # -------------------------------
-selected_group = st.selectbox("Choose the Group:", groups_sorted)
+left_col, right_col = st.columns([3, 1])  # left: main content, right: filter pane
 
-# Build display options for roles within the selected group.
-# To avoid ambiguity we map display string -> column index.
-role_entries = groups_map.get(selected_group, [])
-display_to_colidx = {}
-display_options = []
-for i, (col_idx, role_name) in enumerate(role_entries):
-    # Make a readable label. Include column index to ensure uniqueness (in case role repeats within group).
-    display_label = f"{role_name}  (col {col_idx})"
-    display_options.append(display_label)
-    display_to_colidx[display_label] = col_idx
+with left_col:
+    selected_group = st.selectbox("Choose the Group (header group):", groups_sorted)
 
-selected_role_display = st.selectbox("Choose the Role (within selected group):", display_options)
-selected_col_idx = display_to_colidx[selected_role_display]
+    role_entries = groups_map.get(selected_group, [])
+    display_to_colidx = {}
+    for col_idx, role_name in role_entries:
+        display_to_colidx[f"{role_name} (col {col_idx})"] = col_idx
 
-# -------------------------------
-# Choose SOP Category
-# -------------------------------
-sop_category = st.selectbox("Choose the SOP category:", list(category_map.keys()))
-category_value = category_map[sop_category]
+    selected_role_display = st.selectbox("Choose the Role (within group):", list(display_to_colidx.keys()))
+    selected_col_idx = display_to_colidx[selected_role_display]
 
-st.markdown("---")
+    # Keep a top convenience single-select SOP category (but sidebar multi-select will be authoritative)
+    sop_category = st.selectbox("Convenience: SOP category (single-select)", list(category_map.keys()))
+    st.markdown("---")
 
 # -------------------------------
-# Normalize expected columns (Number, Title, Business Unit, SOP Type, Notes)
+# Identify key columns
 # -------------------------------
-bu_col = pick_column(data_df, ["Business Unit", "BusinessUnit", "Business unit", "Business_unit"])
-sop_type_col = pick_column(data_df, ["SOP Type", "SOPType", "SOP type"])
-number_col = pick_column(data_df, ["Number", "No", "ID", "SOP Number", "SOP No", "Number "])
-title_col = pick_column(data_df, ["Title", "SOP Title", "Name", "Title "])
-notes_col = pick_column(data_df, ["Notes", "Note", "Remarks", "Region Notes", "Comments"])
+practice_col = pick_column(data_df, ["Practice", "Department", "Function"])
+group_col = pick_column(data_df, ["Group", "SOP Group", "Team Group"])
+bu_col = pick_column(data_df, ["Business Unit", "BusinessUnit"])
+sop_type_col = pick_column(data_df, ["SOP Type", "Type"])
+number_col = pick_column(data_df, ["Number", "SOP Number", "No", "ID"])
+title_col = pick_column(data_df, ["Title", "SOP Title"])
+notes_col = pick_column(data_df, ["Notes", "Remarks", "Comments", "Region Notes"])
 
-# Fallback: if title_col missing, try column D (4th column name)
 if title_col is None and len(data_df.columns) >= 4:
     title_col = data_df.columns[3]
 
-# -------------------------------
-# Use iloc with selected_col_idx to get the exact role column (avoids duplicate label problem)
-# -------------------------------
-role_series = data_df.iloc[:, selected_col_idx].apply(to_int_safe)
-
-# Filter rows where role == category_value
-filtered = data_df[role_series == category_value].copy()
-
-# =====================================================
-# NEW: Sidebar filter pane with checkboxes
-# =====================================================
-
-# Prepare a RegionsDetected column *for filtered set* to enable region filtering.
-regions = ["china", "korea", "taiwan", "hong kong", "india", "us", "uk"]  # extend as needed
-
-def detect_regions(text):
-    text = str(text).lower()
-    found = [r for r in regions if r in text]
-    return ", ".join(found) if found else ""
-
-if notes_col and notes_col in filtered.columns:
-    filtered["RegionsDetected"] = filtered[notes_col].apply(detect_regions)
+# Precompute role_series and RegionsDetected across entire data_df (so right pane can inspect)
+role_series_all = data_df.iloc[:, selected_col_idx].apply(to_int_safe)
+if notes_col:
+    data_df["RegionsDetected"] = data_df[notes_col].apply(detect_regions)
 else:
-    filtered["RegionsDetected"] = ""
-
-def checkbox_group(label: str, values, key_prefix: str):
-    """
-    Render a group of checkboxes and return the selected values.
-    By default, all options are checked.
-    """
-    st.markdown(f"**{label}**")
-    selected = []
-    for v in values:
-        vs = "" if (pd.isna(v) or v is None) else str(v)
-        # stable, unique key per value
-        if st.checkbox(vs if vs != "" else "(blank)", value=True, key=f"{key_prefix}_{vs}"):
-            selected.append(v)
-    return selected
-
-with st.sidebar:
-    st.header("Filters")
-
-    # Business Unit filter
-    if bu_col and bu_col in filtered.columns:
-        bu_vals = list(pd.Series(filtered[bu_col].astype(str)).replace("nan", "").unique())
-        bu_vals = sorted(bu_vals, key=lambda x: (x == "", x.lower()))
-        selected_bu = checkbox_group("Business Unit", bu_vals, "bu")
-    else:
-        selected_bu = None
-
-    # SOP Type filter
-    if sop_type_col and sop_type_col in filtered.columns:
-        st.markdown("---")
-        sop_vals = list(pd.Series(filtered[sop_type_col].astype(str)).replace("nan", "").unique())
-        sop_vals = sorted(sop_vals, key=lambda x: (x == "", x.lower()))
-        selected_sop = checkbox_group("SOP Type", sop_vals, "soptype")
-    else:
-        selected_sop = None
-
-    # Region filter (derived from Notes keyword scan)
-    st.markdown("---")
-    # Offer checkboxes only for regions that actually occur in the filtered set
-    region_present = set()
-    if "RegionsDetected" in filtered.columns:
-        for r in regions:
-            if any(filtered["RegionsDetected"].str.contains(r, na=False)):
-                region_present.add(r)
-    region_present = sorted(region_present)
-    if region_present:
-        selected_regions = checkbox_group("Regions (from Notes)", region_present, "region")
-    else:
-        selected_regions = None
-        st.caption("No region indicators detected in current selection.")
-
-# Apply filters to 'filtered'
-mask = pd.Series(True, index=filtered.index)
-
-# Business Unit mask
-if selected_bu is not None:
-    # treat blanks explicitly
-    bu_series = filtered[bu_col].astype(str).replace("nan", "")
-    mask &= bu_series.isin(selected_bu)
-
-# SOP Type mask
-if selected_sop is not None:
-    sop_series = filtered[sop_type_col].astype(str).replace("nan", "")
-    mask &= sop_series.isin(selected_sop)
-
-# Regions mask (OR across multiple regions; rows with no region tag are excluded if any region is selected)
-if selected_regions is not None and len(selected_regions) > 0:
-    if len(selected_regions) != len(region_present):  # only filter if user unticked something
-        region_mask = pd.Series(False, index=filtered.index)
-        for r in selected_regions:
-            region_mask |= filtered["RegionsDetected"].str.contains(r, na=False)
-        mask &= region_mask
-
-filtered = filtered[mask].copy()
-# =====================================================
-# END NEW: Sidebar filter pane
-# =====================================================
+    data_df["RegionsDetected"] = ""
 
 # -------------------------------
-# Prepare table to display with Number & Title first
+# RIGHT: Collapsible filter panel with Select All / Unselect All for Groups
 # -------------------------------
-if filtered.empty:
-    st.info(
-        f"No SOPs found for role **{selected_role_display}** in category **{sop_category}** "
-        f"(sheet: {sheet_choice}) after applying filters."
-    )
-else:
-    # Build display dataframe
-    display_cols = []
-    if number_col and number_col in filtered.columns:
-        display_cols.append(number_col)
-    if title_col and title_col in filtered.columns:
-        display_cols.append(title_col)
+with right_col:
+    with st.expander("Filters (click to expand/collapse)", expanded=True):
+        st.write("Use these checkboxes to filter results. Group list supports Select all / Unselect all.")
 
-    # Add additional useful columns
-    for c in ["Business Unit", "SOP Type", "Notes", "RegionsDetected"]:
-        if c in filtered.columns:
-            display_cols.append(c)
+        # Practice filter
+        practice_vals = []
+        if practice_col and practice_col in data_df.columns:
+            practice_vals = sorted(data_df[practice_col].dropna().unique())
+            st.markdown("**Practice**")
+            selected_practice = checkbox_group_inline(practice_vals, "filter_practice", default=True)
         else:
-            # If our normalized names differ, try the resolved names
-            if c == "Business Unit" and bu_col and bu_col in filtered.columns:
-                display_cols.append(bu_col)
-            if c == "SOP Type" and sop_type_col and sop_type_col in filtered.columns:
-                display_cols.append(sop_type_col)
-            if c == "Notes" and notes_col and notes_col in filtered.columns:
-                display_cols.append(notes_col)
+            selected_practice = None
+            st.markdown("**Practice**")
+            st.caption("No Practice column detected.")
 
-    # If none of number/title detected, fall back to first 4 columns
-    if not display_cols:
-        display_cols = list(filtered.columns[:4])
+        st.markdown("---")
 
-    table_df = filtered[display_cols].copy()
-    # Clean NaNs
-    table_df = table_df.fillna("")
-    # Standardize column names for display: prefer "Number" and "Title"
-    rename_map = {}
-    if number_col and number_col in table_df.columns:
-        rename_map[number_col] = "Number"
-    if title_col and title_col in table_df.columns:
-        rename_map[title_col] = "Title"
-    if bu_col and bu_col in table_df.columns:
-        rename_map[bu_col] = "Business Unit"
-    if sop_type_col and sop_type_col in table_df.columns:
-        rename_map[sop_type_col] = "SOP Type"
-    if notes_col and notes_col in table_df.columns:
-        rename_map[notes_col] = "Notes"
-    table_df = table_df.rename(columns=rename_map)
+        # Group filter (long list) with Select all / Unselect all controls
+        group_vals = sorted(groups_sorted)
+        st.markdown("**Group (header groups)**")
+        # buttons that update session_state for each group checkbox key
+        if st.button("Select all groups"):
+            for i, g in enumerate(group_vals):
+                key = f"filter_group__{i}"
+                st.session_state[key] = True
+        if st.button("Unselect all groups"):
+            for i, g in enumerate(group_vals):
+                key = f"filter_group__{i}"
+                st.session_state[key] = False
 
-    # Reorder to ensure Number then Title
-    cols_order = []
-    if "Number" in table_df.columns:
-        cols_order.append("Number")
-    if "Title" in table_df.columns:
-        cols_order.append("Title")
-    for c in table_df.columns:
-        if c not in cols_order:
-            cols_order.append(c)
-    table_df = table_df[cols_order]
+        # Render group checkboxes (persistent keys)
+        selected_group_filter = []
+        for i, g in enumerate(group_vals):
+            key = f"filter_group__{i}"
+            if key not in st.session_state:
+                st.session_state[key] = True  # default to checked
+            checked = st.checkbox(g, value=st.session_state[key], key=key)
+            st.session_state[key] = checked
+            if checked:
+                selected_group_filter.append(g)
 
-    st.subheader(
-        f"SOPs — Sheet: **{sheet_choice}** | Group: **{selected_group}** | Role: **{selected_role_display}** | Category: **{sop_category}**"
-    )
-    st.dataframe(table_df.reset_index(drop=True), use_container_width=True)
+        st.markdown("---")
 
-    # CSV download
-    csv_buffer = io.StringIO()
-    table_df.to_csv(csv_buffer, index=False)
-    csv_bytes = csv_buffer.getvalue().encode()
-    st.download_button(
-        label="Download filtered SOPs as CSV",
-        data=csv_bytes,
-        file_name=f"sops_{sheet_choice}_{selected_group}_{selected_role_display}_{sop_category.replace(' ','_')}.csv",
-        mime="text/csv",
-    )
+        # Category filter (multi-checkbox)
+        st.markdown("**Category**")
+        cat_vals = list(category_map.keys())
+        selected_cat_filter = checkbox_group_inline(cat_vals, "filter_cat", default=True)
+
+        st.markdown("---")
+
+        # Region filter (derived from notes)
+        region_present = sorted({r for r in regions if any(data_df["RegionsDetected"].str.contains(r, na=False))})
+        if region_present:
+            st.markdown("**Region (from Notes)**")
+            selected_region = checkbox_group_inline(region_present, "filter_region", default=True)
+        else:
+            selected_region = None
+            st.markdown("**Region (from Notes)**")
+            st.caption("No region indicators found in data.")
 
 # -------------------------------
-# Region detection (from Notes) — optional (summary view)
+# Apply filters (combine into mask)
 # -------------------------------
-st.markdown("---")
-st.write("Region-specific SOPs detected in Notes (simple keyword scan):")
-# Reuse the table already computed (filtered has RegionsDetected)
-region_hits = filtered[filtered["RegionsDetected"] != ""] if "RegionsDetected" in filtered.columns else pd.DataFrame()
+mask = pd.Series(True, index=data_df.index)
 
-if not region_hits.empty:
-    display_cols2 = []
-    if number_col and number_col in region_hits.columns:
-        display_cols2.append(number_col)
-    if title_col and title_col in region_hits.columns:
-        display_cols2.append(title_col)
-    display_cols2.append("RegionsDetected")
-    display2 = region_hits[display_cols2].fillna("")
-    rename_map2 = {}
-    if number_col and number_col in display2.columns:
-        rename_map2[number_col] = "Number"
-    if title_col and title_col in display2.columns:
-        rename_map2[title_col] = "Title"
-    display2 = display2.rename(columns=rename_map2)
-    st.dataframe(display2.reset_index(drop=True), use_container_width=True)
+# Category filter: use sidebar multi-select (selected_cat_filter). Map to numeric codes.
+if selected_cat_filter:
+    allowed_codes = [category_map[c] for c in selected_cat_filter if c in category_map]
+    if allowed_codes:
+        mask &= role_series_all.isin(allowed_codes)
+    else:
+        # if no allowed_codes (user unchecked all), mask becomes all False
+        mask &= False
+
+# Practice
+if selected_practice and practice_col and practice_col in data_df.columns:
+    mask &= data_df[practice_col].isin(selected_practice)
+
+# Group (data column) -- prefer filtering by data column if present; otherwise, filter by header groups selection
+if group_col and group_col in data_df.columns:
+    if selected_group_filter:
+        # filter by values in the data 'Group' column
+        mask &= data_df[group_col].isin(selected_group_filter)
 else:
-    st.write("No region-specific indicators found (after current filters).")
+    # If user unchecked the header group that is currently selected in the main UI, no rows should remain.
+    # Alternatively, we interpret header group filter as "keep the currently chosen header group only if it is checked".
+    if selected_group not in selected_group_filter:
+        mask &= False
+
+# Region filter (OR across selected regions)
+if selected_region is not None:
+    if len(selected_region) < len(region_present):
+        region_mask = pd.Series(False, index=data_df.index)
+        for r in selected_region:
+            region_mask |= data_df["RegionsDetected"].str.contains(r, na=False)
+        mask &= region_mask
+    # if all regions selected (default), no-op
+
+filtered = data_df[mask].copy()
+
+# -------------------------------
+# Display filtered table (left column)
+# -------------------------------
+with left_col:
+    if filtered.empty:
+        st.info("No SOPs found after applying filters.")
+    else:
+        # Prepare display columns
+        display_cols = []
+        for c in [number_col, title_col, practice_col, group_col, bu_col, sop_type_col, "RegionsDetected", notes_col]:
+            if c and c in filtered.columns and c not in display_cols:
+                display_cols.append(c)
+
+        table_df = filtered[display_cols].fillna("")
+        rename_map = {
+            number_col: "Number",
+            title_col: "Title",
+            practice_col: "Practice",
+            group_col: "Group",
+            bu_col: "Business Unit",
+            sop_type_col: "SOP Type",
+            notes_col: "Notes",
+        }
+        table_df = table_df.rename(columns={k: v for k, v in rename_map.items() if k})
+
+        st.subheader(f"SOPs — Sheet: {sheet_choice} | Role: {selected_role_display}")
+        st.dataframe(table_df.reset_index(drop=True), use_container_width=True)
+
+        # CSV download
+        csv_buffer = io.StringIO()
+        table_df.to_csv(csv_buffer, index=False)
+        st.download_button(
+            label="Download filtered SOPs as CSV",
+            data=csv_buffer.getvalue().encode(),
+            file_name=f"sops_filtered_{sheet_choice}.csv",
+            mime="text/csv",
+        )
