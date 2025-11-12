@@ -1,4 +1,4 @@
-# novotech_functional_training.py
+# novotech_functional_training.py (updated)
 import re
 import io
 import os
@@ -19,28 +19,49 @@ if not os.path.exists(EXCEL_PATH):
 st.write(f"Reading Excel from: {EXCEL_PATH}")
 
 # -------------------------
-# Parsing helpers for Column B
+# Parsing helpers for Column B (more tolerant)
 # -------------------------
-ROLE_RE = re.compile(r"Role\s*:\s*Any of\s*:\s*\(([^)]*)\)", flags=re.I)
-ORG_RE = re.compile(r"Organisation\s*:\s*Any of\s*:\s*\(([^)]*)\)", flags=re.I)
+# match Role or Roles : Any of : ( ... )
+ROLE_RE = re.compile(r"Role(?:s)?\s*:\s*Any of\s*:\s*\(([^)]*)\)", flags=re.I)
+
+# match Organisation or Organisation Type or Organization etc.
+ORG_RE = re.compile(r"Organisat(?:ion|ion)\s*(?:Type)?\s*:\s*Any of\s*:\s*\(([^)]*)\)", flags=re.I)
 
 def split_items(s: str) -> List[str]:
     if not isinstance(s, str) or s.strip() == "":
         return []
+    # split on comma but allow commas inside parentheses not expected — simple split
     parts = [p.strip() for p in re.split(r",\s*", s) if p is not None]
     parts = [p for p in parts if p != ""]
     return parts
+
+def clean_item(it: str) -> str:
+    if not isinstance(it, str):
+        return ""
+    # remove surrounding parentheses and stray quotes and whitespace
+    it2 = re.sub(r"^[\(\)\s\"']+|[\(\)\s\"']+$", "", it).strip()
+    # collapse multiple spaces
+    it2 = re.sub(r"\s{2,}", " ", it2)
+    return it2
 
 def extract_roles(cell: str) -> List[str]:
     if not isinstance(cell, str):
         return []
     roles = []
     for m in ROLE_RE.finditer(cell):
-        roles += split_items(m.group(1))
-    roles = [re.sub(r"^[\(\)\s]+|[\(\)\s]+$", "", r) for r in roles]
-    return sorted(set([r for r in roles if r]))
+        items = split_items(m.group(1))
+        for it in items:
+            itc = clean_item(it)
+            if itc:
+                roles.append(itc)
+    return sorted(set(roles))
 
 def extract_org_groups_practices(cell: str):
+    """
+    From Organisation(...) return two lists: groups, practices.
+    If an item has explicit suffix '(Group)' or '(Practice)' it is placed accordingly.
+    If no suffix present, treat it as Group (conservative to populate filters).
+    """
     if not isinstance(cell, str):
         return [], []
     groups = []
@@ -48,20 +69,34 @@ def extract_org_groups_practices(cell: str):
     for m in ORG_RE.finditer(cell):
         items = split_items(m.group(1))
         for it in items:
-            it = it.strip()
-            g_match = re.match(r"^(.*?)(?:\s*\(\s*Group\s*\)\s*)$", it, flags=re.I)
-            p_match = re.match(r"^(.*?)(?:\s*\(\s*Practice\s*\)\s*)$", it, flags=re.I)
-            if g_match:
-                groups.append(g_match.group(1).strip())
-            elif p_match:
-                practices.append(p_match.group(1).strip())
+            it_clean = clean_item(it)
+            if it_clean == "":
+                continue
+            # detect explicit suffix anywhere
+            if re.search(r"\bgroup\b", it, flags=re.I):
+                # strip trailing "(Group)" or similar
+                name = re.sub(r"\(?\s*group\s*\)?", "", it_clean, flags=re.I).strip(" -,:;")
+                if name:
+                    groups.append(name)
+                else:
+                    # if stripping left nothing, keep the original cleaned
+                    groups.append(it_clean)
+            elif re.search(r"\bpractice\b", it, flags=re.I):
+                name = re.sub(r"\(?\s*practice\s*\)?", "", it_clean, flags=re.I).strip(" -,:;")
+                if name:
+                    practices.append(name)
+                else:
+                    practices.append(it_clean)
             else:
-                # ambiguous entries without suffix ignored
-                pass
-    return sorted(set([g for g in groups if g])), sorted(set([p for p in practices if p]))
+                # no explicit suffix -> treat as Group (so filter populates)
+                groups.append(it_clean)
+    # dedupe & sort
+    groups_u = sorted(set([g for g in groups if g]))
+    practices_u = sorted(set([p for p in practices if p]))
+    return groups_u, practices_u
 
 # -------------------------
-# Load Excel and columns A..E with header-row cleanup
+# Load Excel and columns A..E with header-row cleanup (improved)
 # -------------------------
 xls = pd.ExcelFile(EXCEL_PATH)
 sheet_name = xls.sheet_names[0]
@@ -72,10 +107,17 @@ if raw.shape[1] < 5:
     st.error(f"Expected at least 5 columns (A-E). Found {raw.shape[1]}.")
     st.stop()
 
-# Detect and drop header-like rows (first few rows)
-header_tokens = {"prescriptive", "prescriptive rule", "member selection", "course id", "course title", "curriculum"}
+# Drop fully empty rows
+raw = raw.dropna(how="all").reset_index(drop=True)
+
+# Heuristic: detect header-like rows in the first 10 rows and drop them.
+header_tokens = {
+    "prescriptive", "prescriptive rule", "member selection", "member selection criteria",
+    "course id", "course title", "curriculum", "curriculum title"
+}
 rows_to_drop = []
-for idx in range(min(6, raw.shape[0])):
+for idx in range(min(10, raw.shape[0])):
+    # join first five columns as lower-case text
     row_vals = " ".join([str(x).lower() for x in raw.iloc[idx, :5].tolist()])
     for tok in header_tokens:
         if tok in row_vals:
@@ -86,7 +128,10 @@ if rows_to_drop:
     raw = raw.drop(rows_to_drop).reset_index(drop=True)
     st.write(f"Dropped header-like row(s): {rows_to_drop}")
 
-# extract columns A..E (0..4)
+# After header cleanup, drop any remaining rows that have all five source columns empty
+raw = raw[~(raw.iloc[:, :5].isnull().all(axis=1))].reset_index(drop=True)
+
+# Extract columns A..E
 prescriptive = raw.iloc[:, 0].astype(object).fillna("").astype(str)
 member_criteria = raw.iloc[:, 1].astype(object).fillna("").astype(str)
 course_id_col = raw.iloc[:, 2].astype(object).fillna("").astype(str)
@@ -113,8 +158,9 @@ def parse_row_attributes(index: int):
     return groups, practices, roles
 
 for rule_key, indices in rule_to_indices.items():
+    # treat as curriculum if rule_key non-empty and appears more than once
     if rule_key != "" and len(indices) > 1:
-        # curriculum record
+        # curriculum record: prefer first non-empty curriculum title
         curr_title = ""
         for i in indices:
             t = curriculum_title_col[i]
@@ -132,7 +178,7 @@ for rule_key, indices in rule_to_indices.items():
             agg_practices.update(p)
             agg_roles.update(r)
         records.append({
-            "Title": curr_title,
+            "Title": curr_title.strip(),
             "ID": "",
             "Type": "curriculum",
             "Groups": sorted(list(agg_groups)),
@@ -146,8 +192,8 @@ for rule_key, indices in rule_to_indices.items():
             cid = course_id_col[i].strip() if isinstance(course_id_col[i], str) else ""
             g, p, r = parse_row_attributes(i)
             records.append({
-                "Title": title if title else rule_key,
-                "ID": cid,
+                "Title": title.strip() if title else rule_key.strip(),
+                "ID": cid.strip(),
                 "Type": "course",
                 "Groups": sorted(list(g)),
                 "Practices": sorted(list(p)),
@@ -160,8 +206,11 @@ for rule_key, indices in rule_to_indices.items():
         title = course_title_col[i].strip() if isinstance(course_title_col[i], str) else ""
         cid = course_id_col[i].strip() if isinstance(course_id_col[i], str) else ""
         g, p, r = parse_row_attributes(i)
+        fallback_title = ""
+        if isinstance(curriculum_title_col[i], str) and curriculum_title_col[i].strip():
+            fallback_title = curriculum_title_col[i].strip()
         records.append({
-            "Title": title if title else (curriculum_title_col[i].strip() if isinstance(curriculum_title_col[i], str) and curriculum_title_col[i].strip() else prescriptive[i]),
+            "Title": (title if title else fallback_title if fallback_title else prescriptive[i].strip()),
             "ID": cid,
             "Type": "course",
             "Groups": sorted(list(g)),
@@ -171,15 +220,28 @@ for rule_key, indices in rule_to_indices.items():
         })
 
 # -------------------------
-# DataFrame of parsed records
+# Remove records with empty Title and normalize list fields
 # -------------------------
-out_df = pd.DataFrame(records)
+cleaned = []
+for r in records:
+    title = r.get("Title", "")
+    if not isinstance(title, str) or title.strip() == "":
+        continue
+    # ensure lists exist
+    for L in ("Groups", "Practices", "Roles"):
+        if L not in r or r[L] is None:
+            r[L] = []
+        else:
+            # ensure strings trimmed
+            r[L] = [str(x).strip() for x in r[L] if str(x).strip()]
+    cleaned.append(r)
 
+out_df = pd.DataFrame(cleaned)
+
+# ensure list columns are present
 for col in ["Groups", "Practices", "Roles"]:
     if col not in out_df.columns:
         out_df[col] = [[] for _ in range(len(out_df))]
-    else:
-        out_df[col] = out_df[col].apply(lambda v: v if isinstance(v, list) else ([] if pd.isna(v) else [v]))
 
 # -------------------------
 # Filter lists (alphabetical)
@@ -196,6 +258,10 @@ left_col, right_col = st.columns([1, 3])
 def checkbox_list_unchecked(label: str, options: List[str], key_prefix: str) -> List[str]:
     st.markdown(f"**{label}**")
     selected = []
+    # if options empty, show caption
+    if not options:
+        st.caption("No values found")
+        return selected
     for i, opt in enumerate(options):
         key = f"{key_prefix}__{i}"
         checked = st.checkbox(opt, value=False, key=key)
@@ -255,7 +321,7 @@ with right_col:
         )
 
 # -------------------------
-# Summary
+# Summary & optional debug view
 # -------------------------
 st.markdown("---")
 st.write(f"Total parsed items: {len(out_df)}. Showing {len(filtered_df)} after filters.")
