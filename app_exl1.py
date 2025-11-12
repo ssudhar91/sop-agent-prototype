@@ -10,7 +10,7 @@ st.set_page_config(page_title="Novotech SOP Matrix", layout="wide")
 st.title("Novotech SOP Matrix")
 
 # -------------------------------
-# Path to master Excel file
+# Path to master Excel file (same as before)
 # -------------------------------
 base_dir = os.path.dirname(__file__)
 excel_file_path = os.path.join(base_dir, "data", "Novotech_SOP_Matrix.xlsx")
@@ -35,7 +35,7 @@ category_map = {
 regions = ["china", "korea", "taiwan", "hong kong", "india", "us", "uk"]
 
 # -------------------------------
-# Helper functions
+# Helpers
 # -------------------------------
 def pick_column(df, candidates):
     cols_lower = {c.lower(): c for c in df.columns}
@@ -49,10 +49,10 @@ def to_int_safe(v):
         if pd.isna(v):
             return None
         if isinstance(v, str):
-            v = v.strip()
-            if v == "":
+            v2 = v.strip()
+            if v2 == "":
                 return None
-            return int(float(v))
+            return int(float(v2))
         return int(v)
     except Exception:
         return None
@@ -62,34 +62,15 @@ def detect_regions(text):
     found = [r for r in regions if r in text]
     return ", ".join(found) if found else ""
 
-def checkbox_group_inline(values, key_prefix: str, default=True):
-    """
-    Returns list of values that are checked.
-    Each checkbox key is deterministic and unique.
-    """
-    selected = []
-    for i, v in enumerate(values):
-        v_display = "(blank)" if (pd.isna(v) or str(v).strip() == "") else str(v)
-        key = f"{key_prefix}__{i}"
-        if key not in st.session_state:
-            st.session_state[key] = default
-        checked = st.checkbox(v_display, value=st.session_state[key], key=key)
-        # keep session_state updated to reflect the current checked value
-        st.session_state[key] = checked
-        if checked:
-            selected.append(v)
-    return selected
-
 # -------------------------------
-# Load workbook (auto-select first sheet)
+# Load workbook - automatic first sheet (no sheet chooser)
 # -------------------------------
 xls = pd.ExcelFile(excel_file_path)
 sheets = xls.sheet_names
 if not sheets:
-    st.error("No sheets found in Excel file.")
+    st.error("No sheets found in the Excel file.")
     st.stop()
 
-# AUTOMATIC: pick first sheet (removed "Choose sheet" UI)
 sheet_choice = sheets[0]
 st.markdown(f"**Using sheet:** {sheet_choice}")
 
@@ -107,7 +88,7 @@ if len(header_row) <= 4:
     st.error("Unable to detect role columns beyond column E.")
     st.stop()
 
-# Build group-to-role mapping
+# Build group -> list of (col_idx, role_name)
 groups_map = {}
 for col_idx, col_name in enumerate(header_row):
     if col_idx < 4:
@@ -117,31 +98,11 @@ for col_idx, col_name in enumerate(header_row):
     if group_name == "" or group_name.lower() in ("nan", "none"):
         group_name = "Ungrouped"
     groups_map.setdefault(group_name, []).append((col_idx, col_name))
-groups_sorted = sorted(groups_map.keys())
 
-# -------------------------------
-# UI selections (main left area)
-# -------------------------------
-left_col, right_col = st.columns([3, 1])  # left: main content, right: filter pane
+# Sort group names alphabetically
+groups_sorted = sorted(groups_map.keys(), key=lambda x: x.lower())
 
-with left_col:
-    selected_group = st.selectbox("Choose the Group (header group):", groups_sorted)
-
-    role_entries = groups_map.get(selected_group, [])
-    display_to_colidx = {}
-    for col_idx, role_name in role_entries:
-        display_to_colidx[f"{role_name} (col {col_idx})"] = col_idx
-
-    selected_role_display = st.selectbox("Choose the Role (within group):", list(display_to_colidx.keys()))
-    selected_col_idx = display_to_colidx[selected_role_display]
-
-    # Keep a top convenience single-select SOP category (but sidebar multi-select will be authoritative)
-    sop_category = st.selectbox("Convenience: SOP category (single-select)", list(category_map.keys()))
-    st.markdown("---")
-
-# -------------------------------
-# Identify key columns
-# -------------------------------
+# Identify common columns
 practice_col = pick_column(data_df, ["Practice", "Department", "Function"])
 group_col = pick_column(data_df, ["Group", "SOP Group", "Team Group"])
 bu_col = pick_column(data_df, ["Business Unit", "BusinessUnit"])
@@ -153,142 +114,158 @@ notes_col = pick_column(data_df, ["Notes", "Remarks", "Comments", "Region Notes"
 if title_col is None and len(data_df.columns) >= 4:
     title_col = data_df.columns[3]
 
-# Precompute role_series and RegionsDetected across entire data_df (so right pane can inspect)
-role_series_all = data_df.iloc[:, selected_col_idx].apply(to_int_safe)
+# Compute RegionsDetected for rows (useful if needed later)
 if notes_col:
     data_df["RegionsDetected"] = data_df[notes_col].apply(detect_regions)
 else:
     data_df["RegionsDetected"] = ""
 
 # -------------------------------
-# RIGHT: Collapsible filter panel with Select All / Unselect All for Groups
+# Layout: left = filters, right = main (role selection + results)
 # -------------------------------
-with right_col:
-    with st.expander("Filters (click to expand/collapse)", expanded=True):
-        st.write("Use these checkboxes to filter results. Group list supports Select all / Unselect all.")
+left_col, right_col = st.columns([1, 3])
 
-        # Practice filter
-        practice_vals = []
-        if practice_col and practice_col in data_df.columns:
-            practice_vals = sorted(data_df[practice_col].dropna().unique())
-            st.markdown("**Practice**")
-            selected_practice = checkbox_group_inline(practice_vals, "filter_practice", default=True)
-        else:
-            selected_practice = None
-            st.markdown("**Practice**")
-            st.caption("No Practice column detected.")
-
-        st.markdown("---")
-
-        # Group filter (long list) with Select all / Unselect all controls
-        group_vals = sorted(groups_sorted)
-        st.markdown("**Group (header groups)**")
-        # buttons that update session_state for each group checkbox key
-        if st.button("Select all groups"):
-            for i, g in enumerate(group_vals):
-                key = f"filter_group__{i}"
-                st.session_state[key] = True
-        if st.button("Unselect all groups"):
-            for i, g in enumerate(group_vals):
-                key = f"filter_group__{i}"
-                st.session_state[key] = False
-
-        # Render group checkboxes (persistent keys)
-        selected_group_filter = []
-        for i, g in enumerate(group_vals):
-            key = f"filter_group__{i}"
-            if key not in st.session_state:
-                st.session_state[key] = True  # default to checked
-            checked = st.checkbox(g, value=st.session_state[key], key=key)
-            st.session_state[key] = checked
-            if checked:
-                selected_group_filter.append(g)
-
-        st.markdown("---")
-
-        # Category filter (multi-checkbox)
-        st.markdown("**Category**")
-        cat_vals = list(category_map.keys())
-        selected_cat_filter = checkbox_group_inline(cat_vals, "filter_cat", default=True)
-
-        st.markdown("---")
-
-        # Region filter (derived from notes)
-        region_present = sorted({r for r in regions if any(data_df["RegionsDetected"].str.contains(r, na=False))})
-        if region_present:
-            st.markdown("**Region (from Notes)**")
-            selected_region = checkbox_group_inline(region_present, "filter_region", default=True)
-        else:
-            selected_region = None
-            st.markdown("**Region (from Notes)**")
-            st.caption("No region indicators found in data.")
-
-# -------------------------------
-# Apply filters (combine into mask)
-# -------------------------------
-mask = pd.Series(True, index=data_df.index)
-
-# Category filter: use sidebar multi-select (selected_cat_filter). Map to numeric codes.
-if selected_cat_filter:
-    allowed_codes = [category_map[c] for c in selected_cat_filter if c in category_map]
-    if allowed_codes:
-        mask &= role_series_all.isin(allowed_codes)
-    else:
-        # if no allowed_codes (user unchecked all), mask becomes all False
-        mask &= False
-
-# Practice
-if selected_practice and practice_col and practice_col in data_df.columns:
-    mask &= data_df[practice_col].isin(selected_practice)
-
-# Group (data column) -- prefer filtering by data column if present; otherwise, filter by header groups selection
-if group_col and group_col in data_df.columns:
-    if selected_group_filter:
-        # filter by values in the data 'Group' column
-        mask &= data_df[group_col].isin(selected_group_filter)
-else:
-    # If user unchecked the header group that is currently selected in the main UI, no rows should remain.
-    # Alternatively, we interpret header group filter as "keep the currently chosen header group only if it is checked".
-    if selected_group not in selected_group_filter:
-        mask &= False
-
-# Region filter (OR across selected regions)
-if selected_region is not None:
-    if len(selected_region) < len(region_present):
-        region_mask = pd.Series(False, index=data_df.index)
-        for r in selected_region:
-            region_mask |= data_df["RegionsDetected"].str.contains(r, na=False)
-        mask &= region_mask
-    # if all regions selected (default), no-op
-
-filtered = data_df[mask].copy()
-
-# -------------------------------
-# Display filtered table (left column)
-# -------------------------------
+# LEFT: Filters (Group & Category) - unchecked by default
 with left_col:
-    if filtered.empty:
-        st.info("No SOPs found after applying filters.")
+    st.header("Filters")
+
+    st.markdown("**Group** (header groups) — unchecked by default")
+    # Build checkbox list (unchecked)
+    selected_groups = []
+    for i, g in enumerate(groups_sorted):
+        key = f"filter_group__{i}"
+        # default False for unchecked initially
+        checked = st.checkbox(g, value=False, key=key)
+        if checked:
+            selected_groups.append(g)
+
+    st.markdown("---")
+    st.markdown("**Category** — unchecked by default")
+    selected_categories = []
+    cat_keys = list(category_map.keys())
+    for i, c in enumerate(cat_keys):
+        key = f"filter_cat__{i}"
+        checked = st.checkbox(c, value=False, key=key)
+        if checked:
+            selected_categories.append(c)
+
+    st.markdown("---")
+    st.write("Tip: leave all checkboxes unchecked to show all Groups / Categories.")
+
+# RIGHT: role selector + results
+with right_col:
+    # Role selection remains available; but results are driven by left filters
+    # If no group checked, show all groups in the role dropdown; otherwise show only checked groups
+    groups_for_role_select = selected_groups if selected_groups else groups_sorted
+
+    # If there are no groups (edge case) stop
+    if not groups_for_role_select:
+        st.error("No header groups detected.")
+        st.stop()
+
+    selected_group_for_role = st.selectbox("Choose the Group (for role list):", groups_for_role_select)
+    # Build display options for roles for that group
+    role_entries = groups_map.get(selected_group_for_role, [])
+    display_to_colidx = {}
+    role_display_options = []
+    for col_idx, role_name in role_entries:
+        label = f"{role_name} (col {col_idx})"
+        display_to_colidx[label] = col_idx
+        role_display_options.append(label)
+
+    if not role_display_options:
+        st.warning("No roles found under the selected header group.")
+        selected_role_display = None
+        selected_col_idx = None
     else:
-        # Prepare display columns
+        selected_role_display = st.selectbox("Choose the Role (within group):", role_display_options)
+        selected_col_idx = display_to_colidx[selected_role_display]
+
+    st.markdown("---")
+
+    # Build filter logic:
+    # - Groups: if none selected -> all groups_allowed = groups_sorted
+    #           else groups_allowed = selected_groups (OR across groups)
+    # - Categories: if none selected -> all codes allowed
+    #               else allowed_codes = [category_map[name] ...] (OR across categories)
+    groups_allowed = selected_groups if selected_groups else groups_sorted
+    # collect allowed column indices for those groups
+    allowed_cols = []
+    for g in groups_allowed:
+        allowed_cols += [col_idx for col_idx, _ in groups_map.get(g, [])]
+    allowed_cols = sorted(set(allowed_cols))
+
+    # categories logic
+    if selected_categories:
+        allowed_codes = [category_map[c] for c in selected_categories if c in category_map]
+    else:
+        # allow all categories if none selected
+        allowed_codes = list(category_map.values())
+
+    # Now build mask: include a row if ANY of the allowed_cols has a value in allowed_codes
+    if not allowed_cols:
+        # no role columns found for allowed groups -> no results
+        mask = pd.Series(False, index=data_df.index)
+    else:
+        # gather numeric values for allowed columns safely
+        # create DataFrame of numeric parsed values for allowed cols
+        allowed_vals_df = data_df.iloc[:, allowed_cols].applymap(to_int_safe)
+        # mask True if any column in row has a value in allowed_codes
+        mask = allowed_vals_df.isin(allowed_codes).any(axis=1)
+
+    filtered = data_df[mask].copy()
+
+    # Prepare display columns (Number then Title first)
+    if filtered.empty:
+        st.info("No SOPs found for the current Group(s)/Category selection.")
+    else:
         display_cols = []
-        for c in [number_col, title_col, practice_col, group_col, bu_col, sop_type_col, "RegionsDetected", notes_col]:
+        if number_col and number_col in filtered.columns:
+            display_cols.append(number_col)
+        if title_col and title_col in filtered.columns:
+            display_cols.append(title_col)
+
+        # add commonly useful columns if present
+        for c in [practice_col, group_col, bu_col, sop_type_col, "RegionsDetected", notes_col]:
             if c and c in filtered.columns and c not in display_cols:
                 display_cols.append(c)
 
-        table_df = filtered[display_cols].fillna("")
-        rename_map = {
-            number_col: "Number",
-            title_col: "Title",
-            practice_col: "Practice",
-            group_col: "Group",
-            bu_col: "Business Unit",
-            sop_type_col: "SOP Type",
-            notes_col: "Notes",
-        }
-        table_df = table_df.rename(columns={k: v for k, v in rename_map.items() if k})
+        if not display_cols:
+            display_cols = list(filtered.columns[:6])
 
-        st.subheader(f"SOPs — Sheet: {sheet_choice} | Role: {selected_role_display}")
+        table_df = filtered[display_cols].fillna("")
+
+        # rename for nicer display
+        rename_map = {}
+        if number_col and number_col in table_df.columns:
+            rename_map[number_col] = "Number"
+        if title_col and title_col in table_df.columns:
+            rename_map[title_col] = "Title"
+        if practice_col and practice_col in table_df.columns:
+            rename_map[practice_col] = "Practice"
+        if group_col and group_col in table_df.columns:
+            rename_map[group_col] = "Group"
+        if bu_col and bu_col in table_df.columns:
+            rename_map[bu_col] = "Business Unit"
+        if sop_type_col and sop_type_col in table_df.columns:
+            rename_map[sop_type_col] = "SOP Type"
+        if notes_col and notes_col in table_df.columns:
+            rename_map[notes_col] = "Notes"
+
+        table_df = table_df.rename(columns=rename_map)
+
+        # ensure Number then Title order
+        cols_order = []
+        if "Number" in table_df.columns:
+            cols_order.append("Number")
+        if "Title" in table_df.columns:
+            cols_order.append("Title")
+        for c in table_df.columns:
+            if c not in cols_order:
+                cols_order.append(c)
+        table_df = table_df[cols_order]
+
+        st.subheader(f"SOPs — Sheet: {sheet_choice}")
         st.dataframe(table_df.reset_index(drop=True), use_container_width=True)
 
         # CSV download
