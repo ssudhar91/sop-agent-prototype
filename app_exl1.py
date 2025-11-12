@@ -10,7 +10,7 @@ st.set_page_config(page_title="Novotech SOP Matrix", layout="wide")
 st.title("Novotech SOP Matrix")
 
 # -------------------------------
-# Path to master Excel file (same as before)
+# Path to master Excel file
 # -------------------------------
 base_dir = os.path.dirname(__file__)
 excel_file_path = os.path.join(base_dir, "data", "Novotech_SOP_Matrix.xlsx")
@@ -35,7 +35,7 @@ category_map = {
 regions = ["china", "korea", "taiwan", "hong kong", "india", "us", "uk"]
 
 # -------------------------------
-# Helpers
+# Helper functions
 # -------------------------------
 def pick_column(df, candidates):
     cols_lower = {c.lower(): c for c in df.columns}
@@ -63,7 +63,7 @@ def detect_regions(text):
     return ", ".join(found) if found else ""
 
 # -------------------------------
-# Load workbook - automatic first sheet (no sheet chooser)
+# Load workbook (auto first sheet)
 # -------------------------------
 xls = pd.ExcelFile(excel_file_path)
 sheets = xls.sheet_names
@@ -76,7 +76,7 @@ st.markdown(f"**Using sheet:** {sheet_choice}")
 
 raw = pd.read_excel(excel_file_path, sheet_name=sheet_choice, header=None, dtype=object)
 if raw.shape[0] <= HEADER_COLS_ROW:
-    st.error("The selected sheet doesn't have the expected header rows.")
+    st.error("The sheet doesn't have the expected header rows.")
     st.stop()
 
 group_row = raw.iloc[HEADER_GROUP_ROW].copy().fillna(method="ffill")
@@ -99,7 +99,7 @@ for col_idx, col_name in enumerate(header_row):
         group_name = "Ungrouped"
     groups_map.setdefault(group_name, []).append((col_idx, col_name))
 
-# Sort group names alphabetically
+# Alphabetical group list
 groups_sorted = sorted(groups_map.keys(), key=lambda x: x.lower())
 
 # Identify common columns
@@ -114,27 +114,26 @@ notes_col = pick_column(data_df, ["Notes", "Remarks", "Comments", "Region Notes"
 if title_col is None and len(data_df.columns) >= 4:
     title_col = data_df.columns[3]
 
-# Compute RegionsDetected for rows (useful if needed later)
+# Precompute RegionsDetected
 if notes_col:
     data_df["RegionsDetected"] = data_df[notes_col].apply(detect_regions)
 else:
     data_df["RegionsDetected"] = ""
 
 # -------------------------------
-# Layout: left = filters, right = main (role selection + results)
+# Layout: left = filters, right = main
 # -------------------------------
 left_col, right_col = st.columns([1, 3])
 
-# LEFT: Filters (Group & Category) - unchecked by default
+# LEFT: filters (Group & Category) - unchecked by default
 with left_col:
     st.header("Filters")
 
     st.markdown("**Group** (header groups) — unchecked by default")
-    # Build checkbox list (unchecked)
     selected_groups = []
     for i, g in enumerate(groups_sorted):
         key = f"filter_group__{i}"
-        # default False for unchecked initially
+        # default unchecked
         checked = st.checkbox(g, value=False, key=key)
         if checked:
             selected_groups.append(g)
@@ -150,82 +149,86 @@ with left_col:
             selected_categories.append(c)
 
     st.markdown("---")
-    st.write("Tip: leave all checkboxes unchecked to show all Groups / Categories.")
+    st.write("Tip: leave all checkboxes unchecked to include all Groups / Categories.")
 
-# RIGHT: role selector + results
+# RIGHT: role selector (reflects left-group filter) + results
 with right_col:
-    # Role selection remains available; but results are driven by left filters
-    # If no group checked, show all groups in the role dropdown; otherwise show only checked groups
-    groups_for_role_select = selected_groups if selected_groups else groups_sorted
+    # Determine which groups to use for role list:
+    # If none selected on left, use all groups; otherwise use the checked groups
+    groups_for_roles = selected_groups if selected_groups else groups_sorted
 
-    # If there are no groups (edge case) stop
-    if not groups_for_role_select:
-        st.error("No header groups detected.")
-        st.stop()
+    # Build list of role display strings from those groups (unique, sorted)
+    role_items = []
+    for g in groups_for_roles:
+        for col_idx, role_name in groups_map.get(g, []):
+            role_label = f"{role_name} (col {col_idx})"
+            role_items.append((role_label, col_idx, g, role_name))
+    # dedupe by label (in case) and sort by role label
+    seen = set()
+    role_items_unique = []
+    for label, col_idx, g, role_name in role_items:
+        if label not in seen:
+            seen.add(label)
+            role_items_unique.append((label, col_idx, g, role_name))
+    role_items_unique.sort(key=lambda x: x[0].lower())
 
-    selected_group_for_role = st.selectbox("Choose the Group (for role list):", groups_for_role_select)
-    # Build display options for roles for that group
-    role_entries = groups_map.get(selected_group_for_role, [])
-    display_to_colidx = {}
-    role_display_options = []
-    for col_idx, role_name in role_entries:
-        label = f"{role_name} (col {col_idx})"
-        display_to_colidx[label] = col_idx
-        role_display_options.append(label)
+    # Build dropdown options: include "All roles" first
+    role_options = ["All roles"] + [label for label, _, _, _ in role_items_unique]
 
-    if not role_display_options:
-        st.warning("No roles found under the selected header group.")
-        selected_role_display = None
+    if len(role_options) == 1:
+        st.warning("No roles found for the selected group(s).")
+        selected_role_display = "All roles"
         selected_col_idx = None
     else:
-        selected_role_display = st.selectbox("Choose the Role (within group):", role_display_options)
-        selected_col_idx = display_to_colidx[selected_role_display]
+        selected_role_display = st.selectbox("Choose the Role (optional):", role_options)
+        selected_col_idx = None if selected_role_display == "All roles" else next(
+            (col_idx for label, col_idx, _, _ in role_items_unique if label == selected_role_display), None
+        )
 
     st.markdown("---")
 
-    # Build filter logic:
-    # - Groups: if none selected -> all groups_allowed = groups_sorted
-    #           else groups_allowed = selected_groups (OR across groups)
-    # - Categories: if none selected -> all codes allowed
-    #               else allowed_codes = [category_map[name] ...] (OR across categories)
+    # Determine allowed column indices from selected groups (OR across groups)
     groups_allowed = selected_groups if selected_groups else groups_sorted
-    # collect allowed column indices for those groups
     allowed_cols = []
     for g in groups_allowed:
         allowed_cols += [col_idx for col_idx, _ in groups_map.get(g, [])]
     allowed_cols = sorted(set(allowed_cols))
 
-    # categories logic
+    # Determine allowed category codes (OR across categories)
     if selected_categories:
         allowed_codes = [category_map[c] for c in selected_categories if c in category_map]
     else:
-        # allow all categories if none selected
         allowed_codes = list(category_map.values())
 
-    # Now build mask: include a row if ANY of the allowed_cols has a value in allowed_codes
-    if not allowed_cols:
-        # no role columns found for allowed groups -> no results
-        mask = pd.Series(False, index=data_df.index)
+    # Build mask:
+    # If user selected a specific role (selected_col_idx not None), restrict to that column only.
+    if selected_col_idx is not None:
+        # role-specific filtering: check that selected_col_idx is in allowed_cols; if not, no rows
+        if selected_col_idx not in allowed_cols:
+            mask = pd.Series(False, index=data_df.index)
+        else:
+            mask = data_df.iloc[:, selected_col_idx].apply(to_int_safe).isin(allowed_codes)
     else:
-        # gather numeric values for allowed columns safely
-        # create DataFrame of numeric parsed values for allowed cols
-        allowed_vals_df = data_df.iloc[:, allowed_cols].applymap(to_int_safe)
-        # mask True if any column in row has a value in allowed_codes
-        mask = allowed_vals_df.isin(allowed_codes).any(axis=1)
+        # "All roles" — build a DataFrame of allowed columns and check any match in allowed_codes
+        if not allowed_cols:
+            mask = pd.Series(False, index=data_df.index)
+        else:
+            allowed_vals_df = data_df.iloc[:, allowed_cols].applymap(to_int_safe)
+            mask = allowed_vals_df.isin(allowed_codes).any(axis=1)
 
     filtered = data_df[mask].copy()
 
-    # Prepare display columns (Number then Title first)
+    # Display results
     if filtered.empty:
-        st.info("No SOPs found for the current Group(s)/Category selection.")
+        st.info("No SOPs found for the current Group(s)/Category/Role selection.")
     else:
+        # Build display column list; replace Business Unit header with SOP Owner if present
         display_cols = []
         if number_col and number_col in filtered.columns:
             display_cols.append(number_col)
         if title_col and title_col in filtered.columns:
             display_cols.append(title_col)
 
-        # add commonly useful columns if present
         for c in [practice_col, group_col, bu_col, sop_type_col, "RegionsDetected", notes_col]:
             if c and c in filtered.columns and c not in display_cols:
                 display_cols.append(c)
@@ -235,7 +238,7 @@ with right_col:
 
         table_df = filtered[display_cols].fillna("")
 
-        # rename for nicer display
+        # Rename columns for display; Business Unit -> SOP Owner
         rename_map = {}
         if number_col and number_col in table_df.columns:
             rename_map[number_col] = "Number"
@@ -246,15 +249,15 @@ with right_col:
         if group_col and group_col in table_df.columns:
             rename_map[group_col] = "Group"
         if bu_col and bu_col in table_df.columns:
-            rename_map[bu_col] = "Business Unit"
+            rename_map[bu_col] = "SOP Owner"  # <<-- renamed as requested
         if sop_type_col and sop_type_col in table_df.columns:
             rename_map[sop_type_col] = "SOP Type"
         if notes_col and notes_col in table_df.columns:
             rename_map[notes_col] = "Notes"
 
-        table_df = table_df.rename(columns=rename_map)
+        table_df = table_df.rename(columns={k: v for k, v in rename_map.items() if k})
 
-        # ensure Number then Title order
+        # Ensure Number then Title order
         cols_order = []
         if "Number" in table_df.columns:
             cols_order.append("Number")
