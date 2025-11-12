@@ -9,6 +9,7 @@ from typing import List, Set
 st.set_page_config(page_title="Novotech Functional Training", layout="wide")
 st.title("Novotech Functional Training")
 
+base_dir = os.path.dirname(__file__)
 excel_file_path = os.path.join(base_dir, "data", "PR_Audience_LearningItem_Export.xlsx")
 
 if not os.path.exists(EXCEL_PATH):
